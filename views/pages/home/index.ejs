@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<title>Business Expenses Calculator</title>
+
+<style>
+
+* {
+  font-family: sans-serif;
+  margin:0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#mainContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+#formHeading {
+  align-self: center;
+  font-size: 40px;
+  margin-top: 20px;
+}
+
+#expensesForm {
+  align-self: center;
+  margin-top: 20px;
+  background: darkgrey;
+  padding: 10px 20px 20px 20px;
+  border-radius: 5px;
+  box-shadow: 2px 2px 2px grey;
+  width: 40%;
+}
+
+.itemContainers {
+  display: flex;
+  justify-content: space-between; 
+  margin-top: 10px;
+}
+
+.labels {
+  font-size: 35px;
+  font-weight: bold;
+  color: white;
+}
+
+select, #dateBox, #dollars {
+  width: 50%;
+}
+
+select {
+  font-size: 25px;
+  padding: 5px 20px 5px 20px;
+  border-radius: 5px;
+  background: white;
+}
+
+#dateBox {
+  font-size: 20px;
+  border-radius: 5px;
+  padding: 5px 20px 5px 20px;
+}
+
+#dollars {
+  font-size: 20px;
+  border-radius: 5px;
+  padding: 5px 20px 5px 20px;
+}
+
+#dollarSign {
+  font-size: 25px;
+  align-self: center;
+  color: white;
+  position: absolute;
+  left: calc(50% + -20px);
+}
+
+#submitContainer {
+  margin-top: 20px;
+}
+
+#submitContainer input {
+  width: 100%;
+  font-size: 30px;
+  color: white;
+  border-radius: 5px;
+  -webkit-appearance: none;
+  background: #5b88e8;
+  height: 45px;
+}
+
+</style>
+</head>
+<body>
+
+  <div id="mainContainer">
+
+    <h1 id="formHeading">Business Expenses Calculator</h1>
+
+    <form id="expensesForm" action="/sendReciept" method="post">
+
+      <div class="itemContainers">
+
+        <label class="labels">Expense Type:</label>
+
+        <select name="Type"> 
+          <option value="Home Depot">Home Depot</option>
+          <option value="Lowes">Lowes</option>
+          <option value="Gas">Gas</option>
+          <option value="Other">Other</option>
+        </select>
+
+      </div>
+
+      <div class="itemContainers">
+
+        <label class="labels">Date:</label>
+
+        <input id="dateBox" type="date" name="date" min="2017-01-01" max="2017-12-31">
+
+      </div>
+
+      <div class="itemContainers">
+
+        <label class="labels">Amount:</label>
+
+        <input id="dollars" type="number" name="amount"  min="0.01" step="0.01" max="2500" value="00.00">
+
+        <span id="dollarSign">$</span>
+
+      </div>
+
+      <div id="submitContainer">
+
+        <input type="submit" name="submit" value="Add this reciept">
+
+      </div>
+
+    </form>
+    
+  </div>
+
+
+</body>
+</html>

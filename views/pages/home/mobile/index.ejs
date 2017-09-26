@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <title>Business Expenses Calculator Mobile</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- <meta http-equiv="refresh" content="1"> -->
+
+</head>
+
+<style>
+
+* {
+  font-family: sans-serif;
+  margin:0;
+  padding: 0;
+  box-sizing: border-box; 
+}  
+
+html, body {
+  height: 100%;
+}
+
+.active {
+  display: block;
+}
+
+.hidden {
+  display: none;
+}
+
+.radioButtons {
+  display: none;
+}
+
+#expensesForm {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+#firstSection {
+  width: 90%;
+}
+
+#firstSectionHeadingContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.seperation {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.radioContainers {
+  padding: 10px;
+}
+
+.radioContainers input:checked + .imageCropping {
+    -webkit-filter: none;
+       -moz-filter: none;
+            filter: none;
+} 
+
+.imageCropping {
+  background-size:contain;
+  background-repeat:no-repeat;
+  display:inline-block;
+  width: 120px;
+  height: 120px;
+  border-radius: 5px;
+    -webkit-filter: brightness(1.8) grayscale(1) opacity(.7);
+       -moz-filter: brightness(1.8) grayscale(1) opacity(.7);
+            filter: brightness(1.8) grayscale(1) opacity(.7);
+}
+
+.buttonContainer {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.buttonContainer input {
+  -webkit-appearance: none;
+  background: #5b88e8;
+  height: 40px;
+  color: white;
+  font-size: 20px;
+  width: 70%;
+}
+
+.home-depot-label {
+  background-image: url('homedepot.png');
+}
+
+.lowes-label {
+  background-image: url('lowes.png');
+}
+
+.shell-label {
+  background-image: url('gas.png');
+}
+
+.other-label {
+  background-image: url('other.png');
+}
+
+#errorContainer {
+  color: white;
+  background: red;
+  text-align: center;
+}
+
+</style>
+
+<body>
+
+  <div id="errorContainer"></div>
+
+  <form id="expensesForm">
+
+    <div id="firstSection" class="active">
+
+      <div id="firstSectionHeadingContainer">
+
+        <h1 id="firstSectionHeading">Select Expense Type</h1>
+        
+      </div>
+
+      <div class="seperation">
+        
+        <div class="radioContainers">
+          
+          <input id="homeDepot" class="radioButtons" type="radio" name="expense-type" value="Home Depot">
+          <label class="home-depot-label imageCropping touchButton" for="homeDepot"></label>
+          
+        </div>
+
+        <div class="radioContainers">
+
+          <input id="lowes" class="radioButtons" type="radio" name="expense-type" value="Lowes">
+          <label class="lowes-label imageCropping touchButton" for="lowes"></label>
+
+        </div>
+
+      </div>
+
+      <div class="seperation">
+        
+        <div class="radioContainers">
+
+          <input id="shell" class="radioButtons" type="radio" name="expense-type" value="Gas">
+          <label class="shell-label imageCropping touchButton" for="shell"></label>
+
+        </div>
+
+        <div class="radioContainers">
+
+          <input id="other" class="radioButtons" type="radio" name="expense-type" value="Other">
+          <label class="other-label imageCropping touchButton" for="other"></label>
+
+        </div>
+        
+      </div>
+
+      <div class="buttonContainer">
+
+        <input class="nextButton" type="button" name="Next" onclick="return validateRadioButtons()" value="Next &#187;">
+        
+      </div>
+
+    </div>
+
+    <div id="secondSection" class="hidden">
+
+      <div id="itemContainers">
+
+        <label>Date:</label>
+
+        <input id="dateBox" type="date" name="date" min="2017-01-01" max="2017-12-31">
+
+        <input type="button" name="Next" value="Next">
+        
+      </div>
+      
+    </div>
+
+  </form>
+
+<script>
+
+  var button = document.querySelectorAll('.touchButton');
+  var errorContainer = document.getElementById('errorContainer');
+
+  var i;
+  var buttonLength = button.length;
+  var radioButton;
+
+  for (i = 0; i < buttonLength; i++) {
+
+    button[i].addEventListener('touchstart', function(e) {
+
+      e.preventDefault();
+
+      radioButton = document.getElementById(this.attributes['for'].value);
+
+      radioButton.checked = true;
+
+    }, false)
+
+  }
+
+  function validateRadioButtons() {
+
+    var radioContainer = document.getElementById('firstSection')
+    var nextContainer = document.getElementById('secondSection')
+
+    try {
+      
+      if (!radioButton) {
+
+        throw new Error("Please select an expense type*")
+
+      } else {
+
+        errorContainer.innerHTML = ''
+
+      }
+
+    } catch (e) {
+
+      return errorContainer.innerHTML = e.message
+
+    }
+
+    radioContainer.classList.remove('active')
+    radioContainer.classList.add('hidden')
+
+    nextContainer.classList.remove('hidden')
+    nextContainer.classList.add('active')
+    
+  }
+
+</script>
+</body>
+</html>
