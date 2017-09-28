@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <title>Business Expenses</title>
+
+  <!-- <meta http-equiv="refresh" content="2"> -->
+
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.1/css/font-awesome.min.css" />
+
+<style>
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
+
+html, body {
+  height: 100%;
+  background: #606060;
+  background: linear-gradient(to bottom, #0074D9, lightgrey);
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.fa-cog {
+  color: white;
+  font-size: 30px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+}
+
+#navHeading {
+  color: white;
+  margin-top: 10px;
+  padding-left: 10px;
+}
+
+#mainNav {
+  position: fixed;
+  background: linear-gradient(to bottom, #0074D9, lightgrey);
+  box-shadow: -1px -1px 3px lightgrey;
+  width: 0;
+  height: 100%;
+  right: 0;
+  transition: width .5s;
+  z-index: 999; 
+}
+
+#mainNav ul {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin-top: 10px;
+}
+
+#mainNav ul li {
+  padding: 6px 10px 6px 10px;
+}
+
+#mainNav ul li a {
+  color: white;
+  text-decoration: none;
+  font-size: 20px;  
+  white-space: nowrap;
+}
+
+#mainForm {
+  display: flex;
+  flex-direction: column;
+}
+
+#formHeading {
+  color: white;
+  font-weight: normal;
+  font-size: 40px;
+  margin-bottom: 20px;
+}
+
+#questions-container label {
+  color: white;
+}
+
+#spreedsheetLink {
+  color: white;
+  text-decoration: none;
+  font-size: 25px;
+  align-self: flex-end;
+  margin-top: 10px;
+}
+
+.fa-angle-double-right {
+  color: green;
+}
+
+#errorContainer {
+  color: red;
+  font-size: 25px;
+
+}
+
+#start {
+  margin-top: 20px;
+  width: 200px;
+  align-self: center;
+  font-size: 20px;
+  border-radius: 5px;
+  padding: 2px;
+  background-color: darkgrey;
+  color: white;
+  border: none;
+  box-shadow: inset 1px 1px 2px black;
+  font-weight: bold;
+}
+
+</style>
+</head>
+<body>
+
+  <i id="navButton" class="fa fa-cog" aria-hidden="true"></i>
+
+  <nav id="mainNav">
+
+    <h1 id="navHeading">Menu</h1>
+
+    <ul>
+      <li><a href="/"><i class="fa fa-home" aria-hidden="true"></i> Home</a></li>
+      <li><a href="/income"><i class="fa fa-money" aria-hidden="true"></i> Income</a></li>
+      <li><a href="/expenses"><i class="fa fa-credit-card-alt" aria-hidden="true"></i> Expenses</a></li>
+      <li><a href="/profit"><i class="fa fa-calculator" aria-hidden="true"></i> Gross Profit</a></li>
+    </ul>
+    
+  </nav>
+
+  <form id="mainForm" name="mainForm" action="/sendReciept" method="post">
+
+    <h1 id="formHeading">Let's get started</h1>
+
+    <div id="questions-container">
+      
+      <label for="location" class="labels" data-question="Where was this purchase made?">Location:</label>
+      
+      <input id="location" type="text" name="location">
+
+      <label for="date" class="labels" data-question="What date?">Date:</label>
+
+      <input id="date" type="text" name="date">
+
+      <label for="amount" class="labels" data-question="What amount?">Amount:</label>
+
+      <input id="amount" type="text" name="amount">
+      
+    </div>
+
+    <input id="start" type="button" value="Start">
+
+    <a id="spreedsheetLink" href="/expenses/spreedsheet">View all expenses <i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
+
+  </form>
+
+
+  <div id="errorContainer"></div> 
+
+  <script src="scripts/mainNav.js"></script>
+
+  <script type="text/javascript">
+    
+    let formSubmit = document.querySelector('#start');
+
+    let errorContainer = document.querySelector('#errorContainer');
+
+    formSubmit.addEventListener('click', startFormProcess);
+
+    async function startFormProcess (e) {
+
+      e.preventDefault()
+
+      errorContainer.innerHTML = '';
+
+      let labels = document.querySelectorAll('.labels');
+
+      var i;
+
+      let formInput = function (label) {
+
+        return ask(label.dataset.question).then(() => {
+
+          console.log('ask')
+
+          return anwserQuestion()
+
+        }).then(answer => {
+
+          let inputField = document.getElementById(label.attributes['for'].value);
+
+          inputField.value = answer;
+
+        }).catch(err => {
+
+          errorContainer.innerHTML = err
+
+          throw err
+
+        })
+
+      }
+
+      for (i = 0; i < labels.length; i++) {
+
+        await formInput(labels[i])
+      }
+
+      document.forms['mainForm'].submit();
+
+    };
+
+    function ask (question) {
+
+      return new Promise(function(resolve, reject) {
+
+        if (!SpeechSynthesisUtterance) {
+
+          reject('API not supported')
+
+        }
+
+        window.utterances = [];
+
+        let askQuestion = new SpeechSynthesisUtterance(question);
+
+        utterances.push(askQuestion);
+
+        speechSynthesis.speak(askQuestion);
+
+        askQuestion.onend = function() {
+
+          console.log('rann')
+
+          resolve();
+        };
+
+        askQuestion.onerror = function(e) {
+          
+          reject(e.error);
+        };
+
+      })
+
+    }
+
+    function anwserQuestion () {
+
+      return new Promise((resolve, reject) => {
+
+        if (!webkitSpeechRecognition) {
+
+          reject('API not supported')
+        }
+
+        let canYouHearMeComputer = new webkitSpeechRecognition();
+
+        canYouHearMeComputer.start();
+
+        canYouHearMeComputer.onresult = function (e) {
+
+          resolve(e.results[0][0].transcript);
+
+        };
+
+        canYouHearMeComputer.onerror = function(e) {
+          
+          reject(e.error);
+        };
+
+      })
+
+    }
+
+  </script>
+
+</body>
+</html>

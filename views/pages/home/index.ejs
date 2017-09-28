@@ -2,146 +2,92 @@
 <html>
 <head>
 
-	<title>Business Expenses Calculator</title>
+  <title>Speech to text converter in JS</title>
 
-<style>
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.1/css/font-awesome.min.css" />
 
+<style type="text/css">
 * {
   font-family: sans-serif;
   margin:0;
   padding: 0;
-  box-sizing: border-box;
+  box-sizing: border-box; 
 }
 
-#mainContainer {
+html, body {
+  height: 100%;
+  background: #606060;
+  background: linear-gradient(to bottom, #0074D9, lightgrey);
   display: flex;
   flex-direction: column;
+  justify-content: center;
 }
 
-#formHeading {
-  align-self: center;
-  font-size: 40px;
-  margin-top: 20px;
+#mainHeading {
+  color: white;
+  font-size: 50px;
+  text-align: center;
+  margin-bottom: 50px;
 }
 
-#expensesForm {
-  align-self: center;
-  margin-top: 20px;
-  background: darkgrey;
-  padding: 10px 20px 20px 20px;
-  border-radius: 5px;
-  box-shadow: 2px 2px 2px grey;
-  width: 40%;
+#mainNav {
+  height: 70px;
 }
 
-.itemContainers {
+#mainNav ul {
   display: flex;
-  justify-content: space-between; 
-  margin-top: 10px;
+  justify-content: space-around;
+  height: inherit;
 }
 
-.labels {
-  font-size: 35px;
-  font-weight: bold;
-  color: white;
-}
-
-select, #dateBox, #dollars {
-  width: 50%;
-}
-
-select {
-  font-size: 25px;
-  padding: 5px 20px 5px 20px;
-  border-radius: 5px;
-  background: white;
-}
-
-#dateBox {
-  font-size: 20px;
-  border-radius: 5px;
-  padding: 5px 20px 5px 20px;
-}
-
-#dollars {
-  font-size: 20px;
-  border-radius: 5px;
-  padding: 5px 20px 5px 20px;
-}
-
-#dollarSign {
-  font-size: 25px;
+#mainNav ul li {
+  list-style: none;
   align-self: center;
-  color: white;
-  position: absolute;
-  left: calc(50% + -20px);
 }
 
-#submitContainer {
-  margin-top: 20px;
+#mainNav ul li a {
+  color: white;
+  font-size: 35px;
+  text-decoration: none;
 }
 
-#submitContainer input {
-  width: 100%;
-  font-size: 30px;
-  color: white;
-  border-radius: 5px;
-  -webkit-appearance: none;
-  background: #5b88e8;
-  height: 45px;
+#mainNav ul li a:hover > .fa-money {
+  color: green;
 }
+
+#mainNav ul li a:hover > .fa-credit-card-alt {
+  color: #0074D9;
+}
+
+#mainNav ul li a:hover > .fa-calculator {
+  color: orange;
+}
+
 
 </style>
+
 </head>
+
 <body>
 
-  <div id="mainContainer">
+<h1 id="mainHeading">Business Expenses Calculator</h1>
+  
+<nav id="mainNav">
 
-    <h1 id="formHeading">Business Expenses Calculator</h1>
+  <ul>
+    <li><a href="/income">Income <i class="fa fa-money" aria-hidden="true"></i></a></li>
+    <li><a href="/expenses">Expenses <i class="fa fa-credit-card-alt" aria-hidden="true"></i></a></li>
+    <li><a href="/profit">Gross Profit <i class="fa fa-calculator" aria-hidden="true"></i></a></li>
+  </ul>
+  
+</nav>
 
-    <form id="expensesForm" action="/sendReciept" method="post">
-
-      <div class="itemContainers">
-
-        <label class="labels">Expense Type:</label>
-
-        <select name="Type"> 
-          <option value="Home Depot">Home Depot</option>
-          <option value="Lowes">Lowes</option>
-          <option value="Gas">Gas</option>
-          <option value="Other">Other</option>
-        </select>
-
-      </div>
-
-      <div class="itemContainers">
-
-        <label class="labels">Date:</label>
-
-        <input id="dateBox" type="date" name="date" min="2017-01-01" max="2017-12-31">
-
-      </div>
-
-      <div class="itemContainers">
-
-        <label class="labels">Amount:</label>
-
-        <input id="dollars" type="number" name="amount"  min="0.01" step="0.01" max="2500" value="00.00">
-
-        <span id="dollarSign">$</span>
-
-      </div>
-
-      <div id="submitContainer">
-
-        <input type="submit" name="submit" value="Add this reciept">
-
-      </div>
-
-    </form>
-    
-  </div>
+<!--   <h4 align="center">Speech to text converter in JS</h4>
+  <div id="result"></div>
+  <button onclick="startConverting();"><i class="fa fa-microphone"></i></button> -->
 
 
+<script src="scripts/voice.js"></script>
 </body>
+
 </html>

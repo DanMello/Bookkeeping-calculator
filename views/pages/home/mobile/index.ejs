@@ -6,7 +6,9 @@
   <title>Business Expenses Calculator Mobile</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <!-- <meta http-equiv="refresh" content="1"> -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 </head>
 
@@ -14,6 +16,7 @@
 
 * {
   font-family: sans-serif;
+  font-weight: 200;
   margin:0;
   padding: 0;
   box-sizing: border-box; 
@@ -21,6 +24,7 @@
 
 html, body {
   height: 100%;
+  background: black;
 }
 
 .active {
@@ -35,11 +39,22 @@ html, body {
   display: none;
 }
 
+#header {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.fa-cog {
+  color: white;
+  font-size: 30px;
+  padding: 25px;
+}
+
 #expensesForm {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  margin-top: 20px;
 }
 
 #firstSection {
@@ -49,6 +64,12 @@ html, body {
 #firstSectionHeadingContainer {
   display: flex;
   justify-content: center;
+  margin-bottom: 20px;
+}
+
+#firstSectionHeading {
+  color: white;
+  font-size: 35px;
 }
 
 .seperation {
@@ -83,16 +104,16 @@ html, body {
   margin-top: 10px;
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: space-around;
 }
 
-.buttonContainer input {
-  -webkit-appearance: none;
-  background: #5b88e8;
-  height: 40px;
+.nextButton {
   color: white;
-  font-size: 20px;
-  width: 70%;
+  font-size: 30px;
+}
+
+.fa-angle-double-right {
+  color: #0074D9;
 }
 
 .home-depot-label {
@@ -116,82 +137,95 @@ html, body {
   background: red;
   text-align: center;
 }
-
 </style>
 
 <body>
 
-  <div id="errorContainer"></div>
+  <div id="mainContainer">
+    
+    <div id="errorContainer"></div>
 
-  <form id="expensesForm">
+    <header id="header">
 
-    <div id="firstSection" class="active">
+      <i class="fa fa-cog" aria-hidden="true"></i>
 
-      <div id="firstSectionHeadingContainer">
+    </header>
 
-        <h1 id="firstSectionHeading">Select Expense Type</h1>
-        
-      </div>
+    <form id="expensesForm">
 
-      <div class="seperation">
-        
-        <div class="radioContainers">
+      <div id="firstSection" class="hidden">
+
+        <div id="firstSectionHeadingContainer">
+
+          <h1 id="firstSectionHeading">Select Expense Type</h1>
           
-          <input id="homeDepot" class="radioButtons" type="radio" name="expense-type" value="Home Depot">
-          <label class="home-depot-label imageCropping touchButton" for="homeDepot"></label>
+        </div>
+
+        <div class="seperation">
+          
+          <div class="radioContainers">
+            
+            <input id="homeDepot" class="radioButtons" type="radio" name="expense-type" value="Home Depot">
+            <label class="home-depot-label imageCropping touchButton" for="homeDepot"></label>
+            
+          </div>
+
+          <div class="radioContainers">
+
+            <input id="lowes" class="radioButtons" type="radio" name="expense-type" value="Lowes">
+            <label class="lowes-label imageCropping touchButton" for="lowes"></label>
+
+          </div>
+
+        </div>
+
+        <div class="seperation">
+          
+          <div class="radioContainers">
+
+            <input id="shell" class="radioButtons" type="radio" name="expense-type" value="Gas">
+            <label class="shell-label imageCropping touchButton" for="shell"></label>
+
+          </div>
+
+          <div class="radioContainers">
+
+            <input id="other" class="radioButtons" type="radio" name="expense-type" value="Other">
+            <label class="other-label imageCropping touchButton" for="other"></label>
+
+          </div>
           
         </div>
 
-        <div class="radioContainers">
+        <div class="buttonContainer">
 
-          <input id="lowes" class="radioButtons" type="radio" name="expense-type" value="Lowes">
-          <label class="lowes-label imageCropping touchButton" for="lowes"></label>
+          <!-- Just put this here so i could space-around and make my life easier lol !-->
 
+          <div></div>
+
+          <a class="nextButton" onclick="return validateRadioButtons()">Next <i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
+          
         </div>
 
       </div>
 
-      <div class="seperation">
-        
-        <div class="radioContainers">
+      <div id="secondSection" class="active">
 
-          <input id="shell" class="radioButtons" type="radio" name="expense-type" value="Gas">
-          <label class="shell-label imageCropping touchButton" for="shell"></label>
+        <div id="itemContainers">
 
-        </div>
+          <label>Date:</label>
 
-        <div class="radioContainers">
+          <input id="dateBox" type="date" name="date" min="2017-01-01" max="2017-12-31">
 
-          <input id="other" class="radioButtons" type="radio" name="expense-type" value="Other">
-          <label class="other-label imageCropping touchButton" for="other"></label>
-
+          <input type="button" name="Next" value="Next">
+          
         </div>
         
       </div>
 
-      <div class="buttonContainer">
+    </form>
 
-        <input class="nextButton" type="button" name="Next" onclick="return validateRadioButtons()" value="Next &#187;">
-        
-      </div>
-
-    </div>
-
-    <div id="secondSection" class="hidden">
-
-      <div id="itemContainers">
-
-        <label>Date:</label>
-
-        <input id="dateBox" type="date" name="date" min="2017-01-01" max="2017-12-31">
-
-        <input type="button" name="Next" value="Next">
-        
-      </div>
-      
-    </div>
-
-  </form>
+  </div>
 
 <script>
 
@@ -247,6 +281,6 @@ html, body {
     
   }
 
-</script>
+</script> 
 </body>
 </html>

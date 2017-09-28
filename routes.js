@@ -24,7 +24,11 @@ exports = module.exports = function(app, passport) {
   app.get('/', (req, res, next) => {
 
     res.render('pages/home' + req.filepath)
+  })
 
+  app.get('/expenses', (req, res, next) => {
+
+  	res.render('pages/expenses' + req.filepath)
   })
 
   app.post('/sendReciept', (req, res, next) => {
