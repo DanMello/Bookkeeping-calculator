@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<title>Expenses Spreadsheet</title>
+
+</head>
+<body>
+
+	<h1>Hello</h1>
+
+	<ul>
+	<% for(var i=0; i<locations.length; i++) {%>
+	   <li><a href="/expenses/spreadsheet/<%= locations[i].location %>"><%= locations[i].location %></a></li>
+	<% } %>
+	</ul>
+
+</body>
+</html>

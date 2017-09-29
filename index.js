@@ -1,6 +1,7 @@
 //Dependencies
 const bodyParser = require('body-parser')
 const session = require('express-session')
+const flash = require('connect-flash')
 const express = require('express')
 
 //Start the app
@@ -15,6 +16,8 @@ app.config = Config
 const knex = require("knex")
 const knexSetup = Config.get(Config.enviroment)['database']
 
+app.db = knex(knexSetup)
+
 //Files
 const staticAssets = __dirname + '/public'
 
@@ -23,6 +26,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(express.static(staticAssets))
 app.use(session(Config.get('default')['session']))
+app.use(flash())
 
 //setup routes
 require('./routes')(app)
