@@ -7,6 +7,7 @@
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.1/css/font-awesome.min.css" />
 
 <style type="text/css">
+
 * {
   font-family: sans-serif;
   margin:0;
@@ -17,7 +18,7 @@
 html, body {
   height: 100%;
   background: #606060;
-  background: linear-gradient(to bottom, #0074D9, lightgrey);
+  background: linear-gradient(to bottom, #0074D9, #3F4F8E);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -52,17 +53,16 @@ html, body {
 }
 
 #mainNav ul li a:hover > .fa-money {
-  color: green;
+  color: #90EE90;
 }
 
 #mainNav ul li a:hover > .fa-credit-card-alt {
-  color: #0074D9;
+  color: #87CEFA;
 }
 
 #mainNav ul li a:hover > .fa-calculator {
   color: orange;
 }
-
 
 </style>
 
@@ -70,24 +70,18 @@ html, body {
 
 <body>
 
-<h1 id="mainHeading">Business Expenses Calculator</h1>
-  
-<nav id="mainNav">
+  <h1 id="mainHeading">Business Expenses Calculator</h1>
+    
+  <nav id="mainNav">
 
-  <ul>
-    <li><a href="/income">Income <i class="fa fa-money" aria-hidden="true"></i></a></li>
-    <li><a href="/expenses">Expenses <i class="fa fa-credit-card-alt" aria-hidden="true"></i></a></li>
-    <li><a href="/profit">Gross Profit <i class="fa fa-calculator" aria-hidden="true"></i></a></li>
-  </ul>
-  
-</nav>
+    <ul>
+      <li><a href="/income">Income <i class="fa fa-money" aria-hidden="true"></i></a></li>
+      <li><a href="/expenses">Expenses <i class="fa fa-credit-card-alt" aria-hidden="true"></i></a></li>
+      <li><a href="/profit">Gross Profit <i class="fa fa-calculator" aria-hidden="true"></i></a></li>
+    </ul>
+    
+  </nav>
 
-<!--   <h4 align="center">Speech to text converter in JS</h4>
-  <div id="result"></div>
-  <button onclick="startConverting();"><i class="fa fa-microphone"></i></button> -->
-
-
-<script src="scripts/voice.js"></script>
 </body>
 
 </html>

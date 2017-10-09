@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Date test</title>
+
+<style type="text/css">
+	
+label, input, button {
+	font-size: 40px;
+}	
+</style>
+</head>
+<body>
+
+	<form id="dateForm">
+		<label>Date: 	</label>
+		<input id="dateInput" type="text" name="date">
+		<button onclick="return logTheDate()">Log Date</button>
+	</form>
+
+<script>
+	
+  function logTheDate() {
+
+    let myDate = document.getElementById('dateInput');
+
+    let receiptDate
+
+    if (/[a-zA-z]+/g.test(myDate.value)) {
+
+      try {
+
+        if (!/^[a-zA-Z]{3,}\s\d{1,2}(th)*,*\s\d{2,4}\.*$/g.test(myDate.value)) {
+
+          throw new Error('That date format is invalid, please say date in this format (month, day, year) \r Example: October 4th 2017, or October 4 17 something like that!');
+
+        };
+
+      } catch (e) {
+
+        console.log(e)
+
+        return false
+
+      };
+
+      //Remove the "th" from the number, commas and periods. 
+
+      let filteredDate = myDate.value
+        .replace(/\b\d{1,2}[th]{2}\b/g, (x) => x.replace(/\D/g, ''))
+        .replace(/,/g, '')
+        .replace(/\./g, '')
+
+      receiptDate = filteredDate;
+
+    } else {
+
+      // Its a number date
+
+      console.log(new Date(myDate.value))
+
+    }
+
+    // let mySqlDate = new Date(receiptDate).toISOString();
+
+    // console.log(mySqlDate)
+
+    // console.log(test)
+
+    return false
+
+  }	
+
+</script>
+
+</body>
+</html>

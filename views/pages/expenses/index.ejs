@@ -14,13 +14,13 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  font-family: sans-serif;
+  font-family: Times, serif;
 }
 
 html, body {
   height: 100%;
   background: #606060;
-  background: linear-gradient(to bottom, #0074D9, lightgrey);
+  background: linear-gradient(to bottom, #0074D9, #3F4F8E);
 }
 
 body {
@@ -47,7 +47,7 @@ body {
 
 #mainNav {
   position: fixed;
-  background: linear-gradient(to bottom, #0074D9, lightgrey);
+  background: linear-gradient(to bottom,  #0074D9, #3F4F8E);
   box-shadow: -1px -1px 3px lightgrey;
   width: 0;
   height: 100%;
@@ -77,6 +77,7 @@ body {
 #mainForm {
   display: flex;
   flex-direction: column;
+  margin-bottom: 20px;
 }
 
 #formHeading {
@@ -86,43 +87,82 @@ body {
   margin-bottom: 25px;
 }
 
-#questions-container label {
+.questions-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: opacity 1s, visibility 1s;
+}
+
+.questions-container label {
   color: white;
+  font-size: 30px;
+}
+
+.questions-container input {
+  background: none;
+  border: none;
+  border-bottom: 2px solid white;
+  color: white;
+  font-size: 30px;
+  text-align: center;
+}
+
+.questions-container input:focus {
+   outline: none;
 }
 
 #spreedsheetLink {
   color: white;
   text-decoration: none;
-  font-size: 22px;
+  font-size: 30px;
   font-weight: bold;
   align-self: flex-end;
+  margin-left: 50px;
 }
 
 .fa-angle-double-right {
-  color: green;
+  color: #90EE90;
 }
 
 #errorContainer {
-  color: red;
+  color: #F08080;
   font-size: 25px;
-  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.removeHidden {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;  
+}
+
+.addHidden {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
 }
 
 #start {
-  margin-top: 20px;
-  font-size: 22px;
+  font-size: 30px;
   color: white;
   align-self: center;
   cursor: pointer;
   font-weight: bold;
   display: inline-block;
+  transition: opacity 1s, visibility 1s;
+}
+
+#spreedsheetLink {
+  transition: opacity 1s, visibility 1s;
 }
 
 .fa-plus {
-  color: #0074D9;
+  color:  #87CEFA;
 }
 
 #buttonContainer {
+  margin-top: 20px;
   display: flex;
   justify-content: space-around;
 }
@@ -131,6 +171,53 @@ body {
   margin-bottom: 10px;
   font-size: 20px;
   color: white;
+}
+
+#test {
+  position: relative;
+}
+
+#dateContainer {
+  position: absolute;
+  left: 2px ;   
+  font-size: 13.3333px;
+  top: 2px;
+}
+
+.hide {
+  display: none;
+}
+
+#loadingThing {
+  display: flex;
+  align-items: center;
+  align-self: center;
+  margin-top: 20px;
+  transition: opacity 1s, visibility 1s;
+}
+
+#listening {
+  margin-left: 5px;
+  color: white;
+}
+
+#loader {
+  background: #FF4136;
+  border-radius: 100%;
+  width: 30px;
+  height: 30px;
+  animation: scale 3s linear infinite;
+}
+
+@keyframes scale {
+    0% { 
+      transform: scale(.2);
+      opacity: 0;
+    }
+    100% { 
+      transform: scale(1);
+      opacity: .8; 
+    }
 }
 
 </style>
@@ -154,28 +241,43 @@ body {
 
   <div id="successContainer"><%= success %></div> 
 
+  <div id="errorContainer"></div> 
+
   <form id="mainForm" name="mainForm" action="/sendReceipt" method="post">
 
-    <h1 id="formHeading">Let's get started</h1>
+      <div class="questions-container removeHidden">
 
-    <div id="questions-container">
+        <label for="location" class="labels" data-question="Where was this purchase made?">Where was this purchase made?</label>
+        <input id="location" type="text" name="location">
+
+      </div>
+
+      <div class="questions-container removeHidden">
+
+        <label for="date" class="labels" data-question="What date?">What date?</label>
+        <input id="date" type="text" name="date">
+
+      </div>
+
+      <div class="questions-container removeHidden">
+
+        <label for="amount" class="labels" data-question="What amount?">What amount?</label>
+        <input id="amount" type="text" name="amount">
+
+      </div>
+
+      <div class="questions-container removeHidden">
       
-      <label for="location" class="labels" data-question="Where was this purchase made?">Location:</label>
+        <label for="expense_type" class="labels" data-question="What type of expense?">What type of expense?</label>
+        <input id="expense_type" type="text" name="expense_type">
+
+      </div>
       
-      <input id="location" type="text" name="location">
+    </div>
 
-      <label for="date" class="labels" data-question="What date?">Date:</label>
-
-      <input id="date" type="text" name="date">
-
-      <label for="amount" class="labels" data-question="What amount?">Amount:</label>
-
-      <input id="amount" type="text" name="amount">
-
-      <label for="expense_type" class="labels" data-question="What type of expense?">Type:</label>
-
-      <input id="expense_type" type="text" name="expense_type">
-      
+    <div id="loadingThing" class="removeHidden">
+      <div id="loader"></div>
+      <div id="listening">Listening...</div>
     </div>
 
     <div id="buttonContainer">
@@ -187,9 +289,7 @@ body {
     </div>
 
   </form>
-
-  <div id="errorContainer"></div> 
-
+  
   <script src="scripts/mainNav.js"></script>
 
   <script src="scripts/voice.js"></script>

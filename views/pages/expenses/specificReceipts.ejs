@@ -29,19 +29,32 @@ th, td {
     padding: 5px;
 }
 
+#bottomContainer {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  width: 100%;
+  justify-content: space-around;
+}
+
 #pagination {
   display: flex;
   font-size: 25px;
-  margin-top: 10px;
+  font-weight: bold;
 }
 
 #pagination a {
   padding: 0px 5px 0px 5px;
   cursor: pointer;
+  font-weight: normal;
 }
 
 #pagination a:hover {
   opacity: .6;
+}
+
+#sum {
+  font-size: 18px;
 }
 
 </style>
@@ -62,91 +75,26 @@ th, td {
       <td><%= receipts[i].id %></td>
       <td><%= receipts[i].location %></td> 
       <td><%= receipts[i].date %></td>
-      <td><%= receipts[i].amount %></td>
+      <td>$ <%= receipts[i].amount %></td>
       <td><%= receipts[i].expense_type %></td>
     </tr>
   <% } %>
 
 </table>
 
-  <nav id="pagination">
-    <div>Pages:</div>
-  </nav>
-
-<script>
-  
-  let table = document.getElementById('mainTable');
-  let nav = document.getElementById('pagination');
-  
-  let rowsVisible = 24;
-  let totalrows = table.rows.length;
-  let numberOfPages = totalrows / rowsVisible;
-
-  for (i = 0; i < numberOfPages; i++) {
-
-    let pageNumber = i + 1;
-    let createdLink = document.createElement('a');
-
-    createdLink.rel = i;
-    createdLink.innerHTML = pageNumber;
-
-    nav.appendChild(createdLink);
-
-  };
-
-  Array.from(table.rows)
-    .map(rows => {
-      
-      rows.style.display = 'none';
-
-      return rows;
-
-    })
-    .slice(0, rowsVisible)
-    .map(rows => {
+  <div id="bottomContainer">
     
-      rows.style.display = 'table-row';
+    <nav id="pagination">
+      <div>Pages:</div>
+    </nav>
 
-      return rows;
+    <div id="sum">Total for <%= location %> : $ <%= sum %></div>
 
-    });
+  </div>
 
-  let navLinks = nav.childNodes;
 
-  for (i = 0; i < navLinks.length; i++) {
+<script src="../../scripts/tablePagination.js"></script>
 
-    navLinks[i].addEventListener('click', navigate)
-
-  };
-
-  function navigate () {
-
-    let currentPage = this.attributes['rel'].value;
-
-    let startItem = currentPage * rowsVisible;
-
-    let endItem = startItem + rowsVisible;
-
-    Array.from(table.rows)
-      .map(rows => {
-
-        rows.style.display = 'none';
-
-        return rows;
-
-      })
-      .slice(startItem, endItem)
-      .map(rows => {
-
-        rows.style.display = 'table-row';
-
-        return rows;
-
-      })
-
-  };
-
-</script>
 </body>
 </html>
 

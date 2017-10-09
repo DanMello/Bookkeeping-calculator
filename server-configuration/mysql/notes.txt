@@ -1,0 +1,7 @@
+CREATE TABLE receipts (
+	id int NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+	location VARCHAR(255), 
+	date DATE, 
+	amount DECIMAL(7,2) NOT NULL, 
+	expense_type VARCHAR(255)
+);

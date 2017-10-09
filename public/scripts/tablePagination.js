@@ -32,8 +32,6 @@
     
       rows.style.display = 'table-row';
 
-      return rows;
-
     });
 
   let navLinks = nav.childNodes;
@@ -44,7 +42,7 @@
 
   };
 
-  function navigate () {
+  function navigate () { 
 
     let currentPage = this.attributes['rel'].value;
 
@@ -64,9 +62,7 @@
       .map(rows => {
 
         rows.style.display = 'table-row';
-
-        return rows;
-
+        
       })
 
   };

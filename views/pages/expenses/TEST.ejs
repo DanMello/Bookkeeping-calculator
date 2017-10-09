@@ -1,260 +1,50 @@
 <!DOCTYPE html>
+
 <html>
-<head>
 
-	<title>Expenses Page</title>
+  <head>
 
-<style type="text/css">
+    <title>Speech to text converter in JS</title>
 
-* {
-  font-family: sans-serif;
-  margin:0;
-  padding: 0;
-  box-sizing: border-box; 
-  font-weight: normal;
-}
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.1/css/font-awesome.min.css" />
 
-#mainHeader {
-  background: #606060;
-  background: linear-gradient(to right, darkgrey, grey);
-  height: 70px;
-  display: flex;
-  justify-content: space-around;
-}
+    <style type="text/css">
 
-#mainHeading {
-  align-self: center;
-}
+    #loadingThing {
+      display: none;
+      align-items: center;
+    }
 
-#mainHeading a {
-  color: white;
-  text-decoration: none;
-}
+    #listening {
+      margin-left: 5px;
+    }
 
-#mainNav {
-  width: 200px;
-  align-self: center;
-}
+    #loader {
+      background: #FF4136;
+      border-radius: 100%;
+      width: 40px;
+      height: 40px;
+      animation: scale 3s linear infinite;
+    }
 
-#mainNav ul {
-  display: flex;
-  justify-content: space-around;
-}
+    @keyframes scale {
+        0% { 
+          transform: scale(0);
+          opacity: 0;
+        }
+        100% { 
+          transform: scale(1);
+          opacity: 1; 
+        }
+    }
 
-#mainNav ul li {
-  list-style: none;
-  align-self: center;
-}
+    </style>
 
-#mainNav ul li a {
-  color: white;
-  font-size: 20px;
-  text-decoration: none;
-}
+  </head>
 
-#mainNav ul li a:hover {
-  opacity: .6;
-}
+  <body>
 
-#mainContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 
-#expensesForm {
-  margin-top: 10%;
-}
+  </body>
 
-#firstContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-#firstContainer h1 {
-  font-size: 40px;
-}
-
-#mainRadioContainer {
-  display: flex;
-  margin-top: 10px; 
-}
-
-.radioButtons {
-  display: none;
-}
-
-.radioContainers {
-  padding: 10px;
-}
-
-.radioContainers input:checked + .imageCropping {
-    -webkit-filter: none;
-       -moz-filter: none;
-            filter: none;
-} 
-
-.imageCropping {
-  background-size:contain;
-  background-repeat:no-repeat;
-  display:inline-block;
-  width: 120px;
-  height: 120px;
-  border-radius: 5px;
-    -webkit-filter: brightness(1.8) grayscale(1) opacity(.7);
-       -moz-filter: brightness(1.8) grayscale(1) opacity(.7);
-            filter: brightness(1.8) grayscale(1) opacity(.7);
-}
-
-.home-depot-label {
-  background-image: url('homedepot.png');
-}
-
-.lowes-label {
-  background-image: url('lowes.png');
-}
-
-.shell-label {
-  background-image: url('gas.png');
-}
-
-.ace-label {
-  background-image: url('ace.png');
-}
-
-.bestbuy-label {
-  background-image: url('bestbuy.jpg');
-}
-
-.other-label {
-  background-image: url('other.png');
-}
-
-</style>
-</head>
-<body>
-
-	<header id="mainHeader">
-		
-    <h1 id="mainHeading"><a href="/">Business Expenses Calculator</a></h1>
-
-    <nav id="mainNav">
-
-      <ul>
-        <li><a href="/income">Income</a></li>
-        <li><a href="/profit">Gross Profit</a></li>
-      </ul>
-      
-    </nav>
-
-	</header>
-
-  <div id="mainContainer">
-    
-    <form id="expensesForm">
-
-      <div id="firstContainer">
-
-        <h1>Select Location or Expense Type</h1>
-
-        <div id="mainRadioContainer">
-
-          <div class="radioContainers">
-            
-            <input id="homeDepot" class="radioButtons" type="radio" name="expense-type" value="Home Depot">
-            <label class="home-depot-label imageCropping" for="homeDepot"></label>
-            
-          </div>
-
-          <div class="radioContainers">
-
-            <input id="lowes" class="radioButtons" type="radio" name="expense-type" value="Lowes">
-            <label class="lowes-label imageCropping" for="lowes"></label>
-
-          </div>
-          
-          <div class="radioContainers">
-
-            <input id="shell" class="radioButtons" type="radio" name="expense-type" value="Gas">
-            <label class="shell-label imageCropping" for="shell"></label>
-
-          </div>
-
-          <div class="radioContainers">
-
-            <input id="ace" class="radioButtons" type="radio" name="expense-type" value="ace">
-            <label class="ace-label imageCropping" for="ace"></label>
-
-          </div>
-
-          <div class="radioContainers">
-
-            <input id="bestbuy" class="radioButtons" type="radio" name="expense-type" value="bestbuy">
-            <label class="bestbuy-label imageCropping" for="bestbuy"></label>
-
-          </div>
-
-          <div class="radioContainers">
-
-            <input id="other" class="radioButtons" type="radio" name="expense-type" value="Other">
-            <label class="other-label imageCropping" for="other"></label>
-
-          </div>
-          
-        </div>
-          
-      </div>
-      
-    </form>
-    
-  </div>
-
-</body>
 </html>
-
-
-
-<!--     <div id="secondContainer" class="hidden">
-
-      <h1>Reciept Information</h1>
-
-      <div id="recieptContainer">
-
-        <div class="itemContainers">
-
-          <label>Date:</label>
-          <input type="text" name="date">
-
-        </div>
-
-        <div class="itemContainers">
-
-          <label>Amount:</label>
-          <input type="number" name="amount">
-
-        </div>
-
-        <div class="itemContainers">
-
-          <label>Expense Type:</label>
-          <input type="text" name="Catagory">
-
-        </div>
-
-        <div class="itemContainers other">
-
-          <label>Other Location:</label>
-          <input type="text" name="otherlocation" disabled="true">
-
-        </div>
-
-        <div class="itemContainers submitButton">
-
-          <input id="submitButton" type="submit" name="submit" value="Store reciept">
-
-        </div>
-
-      </div>
-
-    </div> -->

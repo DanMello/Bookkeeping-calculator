@@ -50,17 +50,46 @@ exports = module.exports = function(app, passport) {
 
   app.get('/expenses/spreadsheet/:location', (req, res, next) => {
 
+    let storeReceipts
+
     return req.app.db('receipts')
       .where('location', req.params.location)
+      .orderBy('date', 'asc')
       .then(receipts => {
 
         if (!receipts) return new Error('Could not find location')
 
-        res.render('pages/expenses' + req.filepath + 'specificReceipts', {
+        receipts.map(x => {
 
-          receipts: receipts
+          let updateDate = 
+            //index from zero lol
+            `${x.date.getMonth() + 1 }/${x.date.getDate()}/${x.date.getFullYear()}`
+
+          x.date = updateDate
 
         })
+
+        storeReceipts = receipts
+
+        return req.app.db('receipts')
+          .where('location', req.params.location)
+          .sum('amount')
+
+      }).then(amount => {
+        
+        if (!amount) return new Error('Could not sum amounts')
+
+        res.render('pages/expenses' + req.filepath + 'specificReceipts', {
+
+          receipts: storeReceipts,
+          location: req.params.location,
+          sum: amount[0]['sum(`amount`)']
+
+        })
+
+      }).catch(err => {
+
+        return next(err)
 
       })
 
@@ -68,13 +97,24 @@ exports = module.exports = function(app, passport) {
 
   app.post('/sendReceipt', (req, res, next) => {
 
+    let mySqlDate = new Date(req.body.date)
+      .toISOString()
+      .replace(/\T(.*)/, '')
+
+    let receipt = {
+      location: req.body.location,
+      date: mySqlDate,
+      amount: req.body.amount,
+      expense_type: req.body.expense_type
+    }
+
     return req.app.db('receipts')
-      .insert(req.body)
+      .insert(receipt)
       .then(result => {
 
         if (!result) return new Error('Could not add receipt. Please try again')
       
-        req.flash('successMessage', `Success, your ${req.body.location} receipt has been stored.`)
+        req.flash('successMessage', `Success, your ${receipt.location} receipt has been stored.`)
 
         res.redirect('/expenses')
 
@@ -84,6 +124,12 @@ exports = module.exports = function(app, passport) {
 
       })
 
+  })
+
+  app.get('/test', (req, res, next) => {
+
+    res.render('pages/expenses/TEST')
+    
   })
 
 }
