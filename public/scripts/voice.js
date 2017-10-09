@@ -1,48 +1,40 @@
 (function () {
 
-  let formSubmit = document.querySelector('#start');
-  let expenseButton = document.querySelector('#spreedsheetLink');
+  let buttonContainer = document.querySelector('#buttonContainer');
+  let restartContainer = document.querySelector('#continueOrRestart');
 
   let errorContainer = document.querySelector('#errorContainer');
+  let successContainer = document.querySelector('#successContainer')
 
-  formSubmit.addEventListener('click', startFormProcess);
+  let formSubmit = 
+    document.querySelectorAll('#start, #continue').forEach(button => {
+
+      button.addEventListener('click', startFormProcess);
+
+    });
 
   async function startFormProcess (e) {
 
     e.preventDefault();
 
     errorContainer.innerHTML = '';
+    successContainer.innerHTML = '';
 
-    formSubmit.classList.add('addHidden')
-    expenseButton.classList.add('addHidden')
+    buttonContainer.classList.add('removeHidden');
+
+    restartContainer.classList.add('removeHidden');
 
     let labels = document.querySelectorAll('.labels');
 
     let formInput = function (label) {
 
+      let labelInput = label;
+
       return new Promise((resolve, reject) => {
 
-        return ask(label).then(question => {
+        return ask(labelInput).then(labelPassedBack => {
 
-          return anwserQuestion(question);
-
-        }).then(answer => {
-
-          //Here we take the answer if it is date and filter it to make sure we can use it with mysql!
-
-          if (label.attributes['for'].value === 'date') {
-
-            return dateValid(answer)
-
-          } else if (label.attributes['for'].value === 'amount') {
-
-            return amountValid(answer)
-
-          } else {
-
-            return answer;
-            
-          }
+          return anwserQuestion(labelPassedBack);
 
         }).then(answer => {
 
@@ -53,6 +45,8 @@
           resolve()
           
         }).catch(err => {
+
+          restartContainer.classList.remove('removeHidden');
 
           errorContainer.innerHTML = err;
 
@@ -130,13 +124,55 @@
 
       canYouHearMeComputer.start();
 
-      loader.classList.remove('removeHidden')
+      loader.classList.remove('removeHidden');
 
       canYouHearMeComputer.onresult = function (e) {
 
-        label.parentElement.classList.add('addHidden');
+        if (label.attributes['for'].value === 'date') {
 
-        resolve(e.results[0][0].transcript);
+          return dateValid(e.results[0][0].transcript).then(date => {
+
+            label.parentElement.classList.add('removeHidden');
+
+            loader.classList.add('removeHidden');
+
+            resolve(date);
+
+          }).catch(err => {
+
+            loader.classList.add('removeHidden');
+
+            reject(err);
+
+          })
+
+        } else if (label.attributes['for'].value === 'amount') {
+
+          return amountValid(e.results[0][0].transcript).then(amount => {
+
+            label.parentElement.classList.add('removeHidden');
+
+            loader.classList.add('removeHidden');
+
+            resolve(amount);
+
+          }).catch(err => {
+
+            loader.classList.add('removeHidden');
+
+            reject(err);
+
+          })
+
+        } else {
+
+          label.parentElement.classList.add('removeHidden');
+
+          loader.classList.add('removeHidden');
+
+          resolve(e.results[0][0].transcript);
+
+        }
 
       };
         

@@ -59,13 +59,13 @@ exports = module.exports = function(app, passport) {
 
         if (!receipts) return new Error('Could not find location')
 
-        receipts.map(x => {
+        receipts.map(x => { 
 
-          let updateDate = 
-            //index from zero lol
-            `${x.date.getMonth() + 1 }/${x.date.getDate()}/${x.date.getFullYear()}`
+          //index from zero lol, this is for date in this format mm/dd/yyyy
+          x.date = `${x.date.getMonth() + 1 }/${x.date.getDate()}/${x.date.getFullYear()}`
 
-          x.date = updateDate
+          //This is to add commas to the thousands from the decimal format 1,000
+          x.amount = x.amount.toLocaleString()
 
         })
 
@@ -83,7 +83,7 @@ exports = module.exports = function(app, passport) {
 
           receipts: storeReceipts,
           location: req.params.location,
-          sum: amount[0]['sum(`amount`)']
+          sum: amount[0]['sum(`amount`)'].toLocaleString()
 
         })
 
@@ -127,6 +127,29 @@ exports = module.exports = function(app, passport) {
   })
 
   app.get('/test', (req, res, next) => {
+
+    setInterval(addData, 100);
+
+    let data = {
+      location: "Home Depot",
+      date: "2017-10-4",
+      amount: "253.54",
+      expense_type: "Work supplies"
+    }
+
+    function addData() {
+
+      return req.app.db('receipts')
+        .insert(data)
+        .then(result => {
+
+          if (!result) throw new Error("fuck")
+
+          console.log("ADDED")
+
+        })
+
+    }
 
     res.render('pages/expenses/TEST')
     
