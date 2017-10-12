@@ -4,7 +4,7 @@
   let restartContainer = document.querySelector('#continueOrRestart');
 
   let errorContainer = document.querySelector('#errorContainer');
-  let successContainer = document.querySelector('#successContainer')
+  let successContainer = document.querySelector('#successContainer');
 
   let formSubmit = 
     document.querySelectorAll('#start, #continue').forEach(button => {
@@ -25,7 +25,7 @@
     restartContainer.classList.add('removeHidden');
 
     let labels = document.querySelectorAll('.labels');
-
+ 
     let formInput = function (label) {
 
       let labelInput = label;
@@ -42,7 +42,7 @@
 
           inputField.value = answer;
 
-          resolve()
+          resolve();
           
         }).catch(err => {
 
@@ -50,11 +50,11 @@
 
           errorContainer.innerHTML = err;
 
-          reject()
+          reject();
 
         });
         
-      })
+      });
 
     };
 
@@ -65,7 +65,7 @@
       if (!inputFieldValue) {
 
         await formInput(labels[i]);
-      }
+      };
        
     };
 
@@ -166,19 +166,33 @@
 
         } else {
 
+          let results = e.results[0][0].transcript
+            .replace(/'/g, '')
+            .replace(/"/g, '');
+
           label.parentElement.classList.add('removeHidden');
 
           loader.classList.add('removeHidden');
 
-          resolve(e.results[0][0].transcript);
+          resolve(results);
 
         }
 
       };
-        
+
       canYouHearMeComputer.onerror = function(e) {
+
+        loader.classList.add('removeHidden');
         
         reject(e.error);
+
+      };
+
+      canYouHearMeComputer.onend = function() {
+
+        loader.classList.add('removeHidden');
+        
+        reject('Sorry we did not get that please try again');
 
       };
 
@@ -217,7 +231,7 @@
 
       if (/[a-zA-Z]+/.test(amount)) {
 
-        reject('Opps something went wrong please repeat the amount in dollars. Example: $ 432.54 cents')
+        reject('Something went wrong please repeat the amount in dollars. Example: $ 432.54 cents')
 
       } else {
 

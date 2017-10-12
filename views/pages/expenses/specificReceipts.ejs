@@ -4,6 +4,10 @@
 
   <title>Specific Receipts</title>
 
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.1/css/font-awesome.min.css" />
+
+  <link href="../../../styles/print.css" media="print" rel="stylesheet" type="text/css">
+
 <style type="text/css">
 
 body {
@@ -40,7 +44,7 @@ th, td {
 #pagination {
   display: flex;
   font-size: 25px;
-  font-weight: bold;
+  font-weight: bold; 
 }
 
 #pagination a {
@@ -57,6 +61,11 @@ th, td {
   font-size: 18px;
 }
 
+.fa-print {
+  cursor: pointer;
+  font-size: 25px;
+}
+
 </style>
 </head>
 <body>
@@ -64,7 +73,6 @@ th, td {
 <table id="mainTable">
 
     <tr>
-      <th>Id</th>
       <th>Location</th> 
       <th>Date</th>
       <th>Amount</th>
@@ -72,7 +80,6 @@ th, td {
     </tr>
   <% for(var i=0; i<receipts.length; i++) {%>
     <tr>
-      <td><%= receipts[i].id %></td>
       <td><%= receipts[i].location %></td> 
       <td><%= receipts[i].date %></td>
       <td>$ <%= receipts[i].amount %></td>
@@ -83,6 +90,8 @@ th, td {
 </table>
 
   <div id="bottomContainer">
+
+    <div><i id="print" class="fa fa-print" aria-hidden="true"></i></div>
     
     <nav id="pagination">
       <div>Pages:</div>
@@ -92,8 +101,32 @@ th, td {
 
   </div>
 
+<!-- This is quite interesting, if you render extra paths like /2017/lowes that are not in the folder views/, you need to add the amount of back spaces to the original page if that makes since lol to load the resource properly-->
 
-<script src="../../scripts/tablePagination.js"></script>
+<script src="../../../scripts/tablePagination.js"></script>
+<script src="../../../scripts/loader.js"></script>
+
+<script type="text/javascript">
+
+  let printButton = document.querySelector('#print').addEventListener('click', letsPrint)
+  
+  function letsPrint() {
+
+    let table = document.getElementById('mainTable');
+
+    Array.from(table.rows)
+      .map(rows => {
+
+        rows.style.display = 'table-row';
+
+      })
+
+    window.print();
+
+  }
+
+</script>
+
 
 </body>
 </html>

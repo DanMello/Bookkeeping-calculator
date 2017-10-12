@@ -24,6 +24,7 @@ exports = module.exports = function(app, passport) {
   app.get('/', (req, res, next) => {
 
     res.render('pages/home' + req.filepath)
+
   })
 
   app.get('/expenses', (req, res, next) => {
@@ -36,24 +37,44 @@ exports = module.exports = function(app, passport) {
 
   app.get('/expenses/spreadsheet', (req, res, next) => {
 
-    return req.app.db('receipts').distinct('location').then(locations => {
+    return req.app.db('receipts')
+      .select(req.app.db.raw('DISTINCT YEAR(date)'))
+      .then(years => {
 
-      res.render('pages/expenses' + req.filepath + 'expenses', {
+        res.render('pages/expenses' + req.filepath + 'yearFromExpense', {
 
-        locations: locations
+          years: years
 
+        })
+        
       })
-
-    })
 
   })
 
-  app.get('/expenses/spreadsheet/:location', (req, res, next) => {
+  app.get('/expenses/spreadsheet/:year', (req, res, next) => {
+
+    return req.app.db('receipts')
+     .whereRaw(`YEAR(Date) = ${req.params.year}`)
+     .distinct('location')
+     .then(locations => {
+
+        res.render('pages/expenses' + req.filepath + 'expenses', {
+
+          year: req.params.year,
+          locations: locations
+
+        })
+
+     })
+
+  })
+
+  app.get('/expenses/spreadsheet/:year/:location', (req, res, next) => {
 
     let storeReceipts
 
     return req.app.db('receipts')
-      .where('location', req.params.location)
+      .whereRaw(`YEAR(Date) = ${req.params.year} AND location = "${req.params.location}"`)
       .orderBy('date', 'asc')
       .then(receipts => {
 

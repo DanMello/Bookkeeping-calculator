@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<title>Expenses Spreadsheet</title>
+
+</head>
+<body>
+
+	<h1>Expenses Overview</h1>
+
+	<ul>
+	<% for(var i=0; i<years.length; i++) {%>
+
+	   <li><a href="/expenses/spreadsheet/<%= years[i]['YEAR(date)'] %>"><%= years[i]['YEAR(date)'] %></a></li>
+	   
+	<% } %>
+	</ul>
+
+</body>
+</html>

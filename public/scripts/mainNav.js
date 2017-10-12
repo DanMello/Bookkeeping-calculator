@@ -15,7 +15,7 @@
 
     function closeNav (e) {
 
-      if (e.target === nav) return false
+      if (e.target !== e.currentTarget) return false
 
       nav.style.width = '0px';
 

@@ -3,7 +3,7 @@
   let table = document.getElementById('mainTable');
   let nav = document.getElementById('pagination');
   
-  let rowsVisible = 24;
+  let rowsVisible = Math.floor(window.innerHeight / 32);
   let totalrows = table.rows.length;
   let numberOfPages = totalrows / rowsVisible;
 

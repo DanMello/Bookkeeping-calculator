@@ -11,7 +11,9 @@
 
 	<ul>
 	<% for(var i=0; i<locations.length; i++) {%>
-	   <li><a href="/expenses/spreadsheet/<%= locations[i].location %>"><%= locations[i].location %></a></li>
+
+	   <li><a href="/expenses/spreadsheet/<%= year %>/<%= locations[i].location %>"><%= locations[i].location %></a></li>
+
 	<% } %>
 	</ul>
 

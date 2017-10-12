@@ -1,0 +1,17 @@
+@media print {
+
+  body {
+    font-size: 20px; 
+  }
+
+  #print, #pagination > * {
+    display: none;
+  }
+
+  /*Need to print my tables right*/
+  table { page-break-inside:auto }
+  tr    { page-break-inside:avoid; page-break-after:auto }
+  thead { display:table-header-group }
+  tfoot { display:table-footer-group }
+
+}
