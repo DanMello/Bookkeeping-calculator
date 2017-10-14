@@ -1,28 +1,46 @@
-// window.onload = function loader () {
+(function () {
 
-//   let loader = document.createElement('loading');
-//   let mainContainer = document.body;
+  let body = document.body;
+  let mainContainer = body.querySelector('#mainContainer');
 
-//   loader.style.border = '16px solid #f3f3f3';
-//   loader.style['border-top'] = '16px solid #3498db';
-//   loader.style['border-radius'] = '50%';
-//   loader.style.width = "120px";
-//   loader.style.height = "120px";
-//   loader.style.position = 'absolute';
-//   loader.style.top = '50%';
+  console.log('loading')
 
-//   mainContainer.appendChild(loader);
+  let loader = document.createElement('div');
 
-// };
+  mainContainer.style.display = 'none'
 
-// document.addEventListener("DOMContentLoaded", function(event) { 
-  
-//   var loader = document.getElementById('loading');
+  loader.id = 'loading';
+  loader.style.border = '16px solid #f3f3f3';
+  loader.style['border-top'] = '16px solid #3498db';
+  loader.style['border-radius'] = '50%';
+  loader.style.width = "120px";
+  loader.style.height = "120px";
+  loader.style.position = 'absolute';
+  loader.style.top = '50%';
+  loader.style.left = '50%';
+  loader.style['margin-top'] = '-60px';
+  loader.style['margin-left'] = '-60px';
+  loader.style.animation = 'spin 1s linear infinite'
 
-//   if (loader !== null) {
-    
-//     loader.parentElement.removeChild(loader);
+  body.appendChild(loader);
 
-//   }
+  window.onload = function loaded () {
 
-// });
+    console.log('loaded')
+      
+    let loader = document.getElementById('loading');
+
+    if (loader !== null) {
+
+      loader.parentElement.removeChild(loader);
+
+      mainContainer.style.display = 'block'
+      
+    }
+
+  };
+
+})();
+
+
+

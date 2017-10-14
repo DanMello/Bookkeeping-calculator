@@ -76,6 +76,7 @@ exports = module.exports = function(app, passport) {
     return req.app.db('receipts')
       .whereRaw(`YEAR(Date) = ${req.params.year} AND location = "${req.params.location}"`)
       .orderBy('date', 'asc')
+      .limit(200)
       .then(receipts => {
 
         if (!receipts) return new Error('Could not find location')
@@ -149,28 +150,28 @@ exports = module.exports = function(app, passport) {
 
   app.get('/test', (req, res, next) => {
 
-    setInterval(addData, 100);
+    // setInterval(addData, 100);
 
-    let data = {
-      location: "Home Depot",
-      date: "2017-10-4",
-      amount: "253.54",
-      expense_type: "Work supplies"
-    }
+    // let data = {
+    //   location: "Home Depot",
+    //   date: "2017-10-4",
+    //   amount: "253.54",
+    //   expense_type: "Work supplies"
+    // }
 
-    function addData() {
+    // function addData() {
 
-      return req.app.db('receipts')
-        .insert(data)
-        .then(result => {
+    //   return req.app.db('receipts')
+    //     .insert(data)
+    //     .then(result => {
 
-          if (!result) throw new Error("fuck")
+    //       if (!result) throw new Error("fuck")
 
-          console.log("ADDED")
+    //       console.log("ADDED")
 
-        })
+    //     })
 
-    }
+    // }
 
     res.render('pages/expenses/TEST')
     

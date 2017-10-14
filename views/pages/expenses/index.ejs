@@ -152,8 +152,8 @@ html, body {
 #successContainer {
   position: absolute;
   width: 100%;
-  top: 50%;
-  margin-top: -85px;
+  bottom: 50%;
+  margin-bottom: -58px;
   text-align: center;
   font-size: 25px;
   white-space: nowrap;
@@ -163,7 +163,7 @@ html, body {
   position: absolute;
   width: 100%;
   bottom: 50%;
-  margin-bottom: -150px;
+  margin-bottom: -170px;
   text-align: center;
   font-size: 25px;
   white-space: nowrap;
@@ -240,6 +240,16 @@ html, body {
   top: 50%;
 }
 
+#usersInput {
+  position: absolute;
+  width: 100%;
+  bottom: 50%;
+  margin-bottom: -160px;
+  text-align: center;
+  font-size: 25px;
+  white-space: nowrap;
+}
+
 .removeHidden {
   visibility: hidden;
   opacity: 0;
@@ -251,7 +261,13 @@ html, body {
 }
 
 #calendar {
-  color: white;
+  position: absolute;
+  width: 500px;
+  left: 50%;
+  margin-left: -250px;
+  top: 15%;
+  border-radius: 5px;
+  transition: opacity 1s, visibility 1s;
 }
 
 #months {
@@ -260,23 +276,46 @@ html, body {
   flex-direction: column;
   height: 100px;
   margin-top: 10px;
+  width: 80%;
 }
 
 #calendarHeading {
   text-align: center;
   font-size: 28px;
+  top: -35px;
+  width: 100%;
+  color: white;
   font-weight: bold;
+  position: absolute;
+}
+
+#monthContainer {
+  display: flex;
+  justify-content: center;
+  padding: 5px;
 }
 
 #monthbox {
   display: flex;
   flex-direction: row;
   height: 25%;
-  padding-right: 35px;
+}
+
+#monthbox:nth-child(-n+8) {
+  padding-right: 30px;
 }
 
 .monthdaybox {
   flex-grow: 1;
+  font-size: 20px;
+  font-style: italic;
+  color: white;
+}
+
+.monthdayboxnum {
+  color: white;
+  font-size: 22px;
+  font-weight: bold;
 }
 
 @keyframes scale {
@@ -309,65 +348,6 @@ html, body {
     
   </nav>
 
-  <div id="successContainer"><%= success %></div> 
-
-  <div id="calendar" class="removeHidden">
-
-    <div id="calendarHeading">Calendar Months</div>
-
-    <div id="months">
-      <div id="monthbox">
-        <div class="monthdaybox">Jan</div> 
-        <div class="monthdayboxnum">(01)</div>
-      </div>
-      <div id="monthbox">
-        <div class="monthdaybox">Feb</div> 
-        <div class="monthdayboxnum">(02)</div>
-      </div>
-      <div id="monthbox">
-        <div class="monthdaybox">Mar</div> 
-        <div class="monthdayboxnum">(03)</div>
-      </div>
-      <div id="monthbox">
-        <div class="monthdaybox">Apr</div> 
-        <div class="monthdayboxnum">(04)</div>
-      </div>
-      <div id="monthbox">
-        <div class="monthdaybox">May</div> 
-        <div class="monthdayboxnum">(05)</div>
-      </div>
-      <div id="monthbox">
-        <div class="monthdaybox">Jun</div> 
-        <div class="monthdayboxnum">(06)</div>
-      </div>
-      <div id="monthbox">
-        <div class="monthdaybox">Jul</div> 
-        <div class="monthdayboxnum">(07)</div>
-      </div>
-      <div id="monthbox">
-        <div class="monthdaybox">Aug</div> 
-        <div class="monthdayboxnum">(08)</div>
-      </div>
-      <div id="monthbox">
-        <div class="monthdaybox">Sep</div> 
-        <div class="monthdayboxnum">(09)</div>
-      </div>
-      <div id="monthbox">
-        <div class="monthdaybox">Oct</div> 
-        <div class="monthdayboxnum">(10)</div>
-      </div>
-      <div id="monthbox">
-        <div class="monthdaybox">Nov</div> 
-        <div class="monthdayboxnum">(11)</div>
-      </div>
-      <div id="monthbox">
-        <div class="monthdaybox">Dec</div> 
-        <div class="monthdayboxnum">(12)</div>
-      </div>
-    </div>
-
-  </div>
-
   <form id="mainForm" name="mainForm" action="/sendReceipt" method="post">
 
       <div class="questions-container removeHidden">
@@ -390,13 +370,15 @@ html, body {
 
         <label for="amount" class="labels" data-question="What amount?">What amount?</label>
         <input id="amount" class="inputs" type="text" name="amount">
+        <p class="examples">Just say the amount of your receipt in dollars. <br> Example: $ 1,203.54 cents</p>
 
       </div>
 
       <div class="questions-container removeHidden">
       
-        <label for="expense_type" class="labels" data-question="What type of expense?">What type of expense?</label>
+        <label for="expense_type" class="labels" data-question="Reason for expense?">Reason for expense?</label>
         <input id="expense_type" class="inputs" type="text" name="expense_type">
+        <p class="examples">You can say things like: work supplies, office supplies, gasoline, car repairs etc.</p>
 
       </div>
       
@@ -423,9 +405,71 @@ html, body {
 
     </div>
 
-  </form>
+    <div id="successContainer"><%= success %></div>
+    <div id="errorContainer"></div>
 
-  <div id="errorContainer"></div> 
+    <div id="calendar" class="removeHidden">
+
+      <div id="calendarHeading">Calendar Months</div>
+
+      <div id="monthContainer">
+
+        <div id="months">
+          <div id="monthbox">
+            <div class="monthdaybox">Jan</div> 
+            <div class="monthdayboxnum">(01)</div>
+          </div>
+          <div id="monthbox">
+            <div class="monthdaybox">Feb</div> 
+            <div class="monthdayboxnum">(02)</div>
+          </div>
+          <div id="monthbox">
+            <div class="monthdaybox">Mar</div> 
+            <div class="monthdayboxnum">(03)</div>
+          </div>
+          <div id="monthbox">
+            <div class="monthdaybox">Apr</div> 
+            <div class="monthdayboxnum">(04)</div>
+          </div>
+          <div id="monthbox">
+            <div class="monthdaybox">May</div> 
+            <div class="monthdayboxnum">(05)</div>
+          </div>
+          <div id="monthbox">
+            <div class="monthdaybox">Jun</div> 
+            <div class="monthdayboxnum">(06)</div>
+          </div>
+          <div id="monthbox">
+            <div class="monthdaybox">Jul</div> 
+            <div class="monthdayboxnum">(07)</div>
+          </div>
+          <div id="monthbox">
+            <div class="monthdaybox">Aug</div> 
+            <div class="monthdayboxnum">(08)</div>
+          </div>
+          <div id="monthbox">
+            <div class="monthdaybox">Sep</div> 
+            <div class="monthdayboxnum">(09)</div>
+          </div>
+          <div id="monthbox">
+            <div class="monthdaybox">Oct</div> 
+            <div class="monthdayboxnum">(10)</div>
+          </div>
+          <div id="monthbox">
+            <div class="monthdaybox">Nov</div> 
+            <div class="monthdayboxnum">(11)</div>
+          </div>
+          <div id="monthbox">
+            <div class="monthdaybox">Dec</div> 
+            <div class="monthdayboxnum">(12)</div>
+          </div>
+        </div>
+      
+      </div>
+
+    </div>
+
+  </form>
   
   <script src="scripts/mainNav.js"></script>
 

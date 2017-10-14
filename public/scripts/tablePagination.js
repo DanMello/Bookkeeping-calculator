@@ -7,7 +7,23 @@
   let totalrows = table.rows.length;
   let numberOfPages = totalrows / rowsVisible;
 
+  // console.log(totalrows)
+
   for (i = 0; i < numberOfPages; i++) {
+
+    // if (i === 5) {
+
+    //   let createdButton = document.createElement('i');
+
+    //   createdButton.addEventListener('click', loadData);
+    //   createdButton.className = 'fa fa-arrow-right';
+    //   createdButton.style.cursor = 'pointer'
+
+    //   nav.appendChild(createdButton);
+
+    //   break
+
+    // };
 
     let pageNumber = i + 1;
     let createdLink = document.createElement('a');
@@ -34,7 +50,7 @@
 
     });
 
-  let navLinks = nav.childNodes;
+  let navLinks = nav.querySelectorAll('a');
 
   for (i = 0; i < navLinks.length; i++) {
 
@@ -66,5 +82,9 @@
       })
 
   };
+
+  function loadData() {
+    console.log("heyy")
+  }
 
 })();

@@ -4,13 +4,14 @@
 
   <title>Specific Receipts</title>
 
+  
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.1/css/font-awesome.min.css" />
 
   <link href="../../../styles/print.css" media="print" rel="stylesheet" type="text/css">
 
 <style type="text/css">
 
-body {
+#mainContainer {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
@@ -66,28 +67,38 @@ th, td {
   font-size: 25px;
 }
 
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 </style>
 </head>
 <body>
 
-<table id="mainTable">
 
-    <tr>
-      <th>Location</th> 
-      <th>Date</th>
-      <th>Amount</th>
-      <th>Expense Type</th>
-    </tr>
-  <% for(var i=0; i<receipts.length; i++) {%>
-    <tr>
-      <td><%= receipts[i].location %></td> 
-      <td><%= receipts[i].date %></td>
-      <td>$ <%= receipts[i].amount %></td>
-      <td><%= receipts[i].expense_type %></td>
-    </tr>
-  <% } %>
+<div id="mainContainer">
 
-</table>
+<script src="../../../scripts/loader.js"></script>
+
+  <table id="mainTable">
+
+      <tr>
+        <th>Location</th> 
+        <th>Date</th>
+        <th>Amount</th>
+        <th>Expense Type</th>
+      </tr>
+    <% for(var i=0; i<receipts.length; i++) {%>
+      <tr>
+        <td><%= receipts[i].location %></td> 
+        <td><%= receipts[i].date %></td>
+        <td>$ <%= receipts[i].amount %></td>
+        <td><%= receipts[i].expense_type %></td>
+      </tr>
+    <% } %>
+
+  </table>
 
   <div id="bottomContainer">
 
@@ -100,11 +111,13 @@ th, td {
     <div id="sum">Total for <%= location %> : $ <%= sum %></div>
 
   </div>
+  
+</div>
+
 
 <!-- This is quite interesting, if you render extra paths like /2017/lowes that are not in the folder views/, you need to add the amount of back spaces to the original page if that makes since lol to load the resource properly-->
 
 <script src="../../../scripts/tablePagination.js"></script>
-<script src="../../../scripts/loader.js"></script>
 
 <script type="text/javascript">
 

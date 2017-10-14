@@ -1,17 +1,24 @@
 (function () {
 
-  let buttonContainer = document.querySelector('#buttonContainer');
-  let restartContainer = document.querySelector('#continueOrRestart');
+  //use this as a reference so you dont need to keep using the the DOM
+  let theForm = document.getElementById('mainForm');
 
-  let errorContainer = document.querySelector('#errorContainer');
-  let successContainer = document.querySelector('#successContainer');
+  let buttonContainer = theForm.querySelector('#buttonContainer');
+  let restartContainer = theForm.querySelector('#continueOrRestart');
+
+  let errorContainer = theForm.querySelector('#errorContainer');
+  let successContainer = theForm.querySelector('#successContainer');
 
   let formSubmit = 
-    document.querySelectorAll('#start, #continue').forEach(button => {
+    theForm.querySelectorAll('#start, #continue').forEach(button => {
 
       button.addEventListener('click', startFormProcess);
 
     });
+
+  let usersInput = theForm.querySelector('#usersInput');
+
+  let calendar = theForm.querySelector('#calendar');
 
   async function startFormProcess (e) {
 
@@ -24,7 +31,7 @@
 
     restartContainer.classList.add('removeHidden');
 
-    let labels = document.querySelectorAll('.labels');
+    let labels = theForm.querySelectorAll('.labels');
  
     let formInput = function (label) {
 
@@ -38,35 +45,72 @@
 
         }).then(answer => {
 
-          let inputField = document.getElementById(label.attributes['for'].value);
-
-          inputField.value = answer;
-
-          resolve();
+          resolve(answer);
           
         }).catch(err => {
 
-          restartContainer.classList.remove('removeHidden');
-
-          errorContainer.innerHTML = err;
-
-          reject();
+          reject(err);
 
         });
-        
+          
+      }).then(answer => {
+
+        let inputField = theForm.querySelector(`#${label.attributes['for'].value}`);
+
+        inputField.value = answer;
+
+      }).catch(err => {
+
+        throw err
+
       });
 
     };
 
     for (i = 0; i < labels.length; i++) {
 
-      let inputFieldValue = labels[i].nextElementSibling.value;
+      let inputField = labels[i].nextElementSibling;
 
-      if (!inputFieldValue) {
+      if (!inputField.value) {
 
-        await formInput(labels[i]);
-      };
-       
+        try {
+          
+          await formInput(labels[i]);
+
+        } catch (e) {
+
+          restartContainer.classList.remove('removeHidden');
+
+          errorContainer.innerHTML = e;
+
+          return false
+
+        }
+
+      } else {
+
+        try {
+
+          await testThisInput(labels[i], inputField.value).then(answer => {
+
+            inputField.value = answer;
+
+          })
+
+        } catch (e) {
+
+          inputField.value = '';
+
+          restartContainer.classList.remove('removeHidden');
+
+          errorContainer.innerHTML = e;
+
+          return false
+
+        }
+
+      }
+    
     };
 
     //This will submit the form once all inputs are in because of await
@@ -83,6 +127,8 @@
         reject('API not supported');
 
       };
+
+      if (label.attributes['for'].value === 'date') calendar.classList.remove('removeHidden');
 
       window.utterances = [];
 
@@ -118,7 +164,7 @@
 
       };
 
-      let loader = document.getElementById('loadingThing');
+      let loader = theForm.querySelector('#loadingThing');
 
       let canYouHearMeComputer = new webkitSpeechRecognition();
 
@@ -128,55 +174,15 @@
 
       canYouHearMeComputer.onresult = function (e) {
 
-        if (label.attributes['for'].value === 'date') {
+        return testThisInput(label, e.results[0][0].transcript).then(result => {
 
-          return dateValid(e.results[0][0].transcript).then(date => {
+          resolve(result);
 
-            label.parentElement.classList.add('removeHidden');
+        }).catch(err => {
 
-            loader.classList.add('removeHidden');
+          reject(err);
 
-            resolve(date);
-
-          }).catch(err => {
-
-            loader.classList.add('removeHidden');
-
-            reject(err);
-
-          })
-
-        } else if (label.attributes['for'].value === 'amount') {
-
-          return amountValid(e.results[0][0].transcript).then(amount => {
-
-            label.parentElement.classList.add('removeHidden');
-
-            loader.classList.add('removeHidden');
-
-            resolve(amount);
-
-          }).catch(err => {
-
-            loader.classList.add('removeHidden');
-
-            reject(err);
-
-          })
-
-        } else {
-
-          let results = e.results[0][0].transcript
-            .replace(/'/g, '')
-            .replace(/"/g, '');
-
-          label.parentElement.classList.add('removeHidden');
-
-          loader.classList.add('removeHidden');
-
-          resolve(results);
-
-        }
+        })
 
       };
 
@@ -200,11 +206,47 @@
 
   };
 
-  function dateValid(date) {
+  function testThisInput(label, input) {
 
     return new Promise((resolve, reject) => {
 
-      let filteredDate;
+      let filterMethod
+
+      let loader = theForm.querySelector('#loadingThing');
+
+      if (label.attributes['for'].value === 'date') filterMethod = dateValid;
+      
+      else if (label.attributes['for'].value === 'amount') filterMethod = amountValid;
+
+      else filterMethod = stringValid;
+
+      return filterMethod(input).then(result => {
+
+        if (label.attributes['for'].value === 'date') calendar.classList.add('removeHidden');
+
+        label.parentElement.classList.add('removeHidden');
+
+        loader.classList.add('removeHidden');
+
+        resolve(result);
+
+      }).catch(err => {
+
+        loader.classList.add('removeHidden');
+
+        reject(`We heard: ${input} <br> ${err}`);
+
+      })
+
+    })
+
+  };
+
+  function dateValid(date) {
+
+    let filteredDate
+
+    return new Promise((resolve, reject) => {
 
       if (!/^[a-zA-Z]{3,}\s\d{1,2}(st|nd|rd|th)*,*\s\d{2,4}\.*$/g.test(date)) {
 
@@ -229,7 +271,7 @@
 
     return new Promise((resolve, reject) => {
 
-      if (/[a-zA-Z]+/.test(amount)) {
+      if (!/^\$*[0-9,]+(\.[0-9]{1,2})*$/g.test(amount)) {
 
         reject('Something went wrong please repeat the amount in dollars. Example: $ 432.54 cents')
 
@@ -247,5 +289,28 @@
 
   };
 
-})();
+  function stringValid(string) {
 
+    return new Promise((resolve, reject) => {
+
+      let filteredString
+
+      if (!/^([a-zA-Z0-9\'\"]+\s?)*$/g.test(string)) {
+
+        reject('Please say or enter only words and numbers, and no more than one space per word*');
+
+      } else {
+
+        filteredString = string
+          .replace(/\"/g, '')
+          .replace(/\'/g, '')
+
+        resolve(filteredString)
+
+      };
+
+    });
+
+  };
+
+})();

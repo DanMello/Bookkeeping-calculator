@@ -1,69 +1,448 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Speech to text converter in JS</title>
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.1/css/font-awesome.min.css" />
-    <style type="text/css">
-      body{
-        font-family: verdana;
-      }
-      #result{
-        height: 200px;
-        border: 1px solid #ccc;
-        padding: 10px;
-        box-shadow: 0 0 10px 0 #bbb;
-        margin-bottom: 30px;
-        font-size: 14px;
-        line-height: 25px;
-      }
-      button{
-        font-size: 20px;
-        position: absolute;
-        top: 240px;
-        left: 50%;
-      }
-    </style>
-  </head>
-  <body>
-    <h4 align="center">Speech to text converter in JS</h4>
-    <div id="result"></div>
-    <button onclick="startConverting();"><i class="fa fa-microphone"></i></button>
-    <script type="text/javascript">
+<head>
 
-      var r = document.getElementById('result');
+  <title>Business Expenses</title>
 
-      function startConverting () {
-        if('webkitSpeechRecognition' in window){
-          var speechRecognizer = new webkitSpeechRecognition();
-          speechRecognizer.continuous = true;
-          speechRecognizer.interimResults = true;
-          speechRecognizer.lang = 'en-IN';
-          speechRecognizer.start();
+  <!-- <meta http-equiv="refresh" content="2"> -->
 
-          var finalTranscripts = '';
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.1/css/font-awesome.min.css" />
 
-          speechRecognizer.onresult = function(event){
-            var interimTranscripts = '';
-            for(var i = event.resultIndex; i < event.results.length; i++){
-              var transcript = event.results[i][0].transcript;
-              transcript.replace("\n", "<br>");
-              if(event.results[i].isFinal){
-                finalTranscripts += transcript;
-              }else{
-                interimTranscripts += transcript;
-              }
-            }
-            r.innerHTML = finalTranscripts + '<span style="color:#999">' + interimTranscripts + '</span>';
-          };
-          speechRecognizer.onerror = function (event) {
-          };
-        }else{
-          r.innerHTML = 'Your browser is not supported. If google chrome, please upgrade!';
-        }
-      }
+<style>
 
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: Times, serif;
+}
+
+html, body {
+  height: 100%;
+  background: #606060;
+  background: linear-gradient(to bottom, #0074D9, #3F4F8E);
+  overflow: hidden;
+}
+
+.fa-cog {
+  color: white;
+  font-size: 30px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+}
+
+#navHeading {
+  color: white;
+  margin-top: 10px;
+  padding-left: 10px;
+}
+
+#mainNav {
+  position: fixed;
+  background: linear-gradient(to bottom,  #0074D9, #3F4F8E);
+  box-shadow: -1px -1px 3px lightgrey;
+  width: 0;
+  height: 100%;
+  right: 0;
+  transition: width .5s;
+  z-index: 999; 
+}
+
+#mainNav ul {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin-top: 10px;
+}
+
+#mainNav ul li {
+  padding: 6px 10px 6px 10px;
+}
+
+#mainNav ul li a {
+  color: white;
+  text-decoration: none;
+  font-size: 20px;  
+  white-space: nowrap;
+}
+
+#formHeading {
+  color: white;
+  font-weight: normal;
+  font-size: 40px;
+  margin-bottom: 25px;
+}
+
+.questions-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: opacity 1s, visibility 1s;
+  width: 390px;
+  margin-right: -195px;
+  margin-top: -49px;
+}
+
+.questions-container label {
+  color: white;
+  font-size: 30px;
+}
+
+.questions-container input {
+  background: none;
+  border: none;
+  border-bottom: 2px solid white;
+  color: white;
+  font-size: 30px;
+  text-align: center;
+}
+
+.questions-container input:focus {
+   outline: none;
+}
+
+.examples {
+  text-align: center;
+  color: white;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.fa-angle-double-right, .fa-arrow-right {
+  color: #90EE90;
+}
+
+#buttonContainer {
+  display: flex;
+  justify-content: space-around;
+  margin-right: -245.235px;
+  margin-top: 80px;
+  transition: opacity 1s, visibility 1s;
+  white-space: nowrap;
+}
+
+#start, #restart {
+  font-size: 30px;
+  color: white;
+  align-self: center;
+  cursor: pointer;
+  font-weight: bold;
+  display: inline-block;
+}
+
+#restart {
+  text-decoration: none;
+}
+
+.fa-plus, .fa-repeat {
+  color:  #87CEFA;
+}
+
+#spreedsheetLink {
+  color: white;
+  text-decoration: none;
+  font-size: 30px;
+  font-weight: bold;
+  align-self: flex-end;
+  margin-left: 50px;
+}
+
+#successContainer {
+  position: absolute;
+  width: 100%;
+  top: 50%;
+  margin-top: -85px;
+  text-align: center;
+  font-size: 25px;
+  white-space: nowrap;
+}
+
+#errorContainer {
+  position: absolute;
+  width: 100%;
+  bottom: 50%;
+  margin-bottom: -150px;
+  text-align: center;
+  font-size: 25px;
+  white-space: nowrap;
+}
+
+#successContainer {
+  color: white;
+}
+
+#errorContainer {
+  color: #F08080;
+}
+
+#continueOrRestart {
+  display: flex;
+  justify-content: space-around;
+  margin-right: -313.51px;
+  margin-top: 75px;
+  transition: opacity 1s, visibility 1s;
+  white-space: nowrap;
+}
+
+#continue {
+  color: white;
+  text-decoration: none;
+  font-size: 30px;
+  font-weight: bold;
+  align-self: flex-end;
+  margin-left: 50px;
+  cursor: pointer;
+}
+
+#test {
+  position: relative;
+}
+
+#dateContainer {
+  position: absolute;
+  left: 2px ;   
+  font-size: 13.3333px;
+  top: 2px;
+}
+
+.hide {
+  display: none;
+}
+
+#loadingThing {
+  display: flex;
+  align-items: center;
+  align-self: center;
+  transition: opacity 1s, visibility 1s;
+  margin-right: -53.72px;
+  margin-top: 75px;
+  white-space: nowrap;
+}
+
+#listening {
+  margin-left: 5px;
+  color: white;
+}
+
+#loader {
+  background: #FF4136;
+  border-radius: 100%;
+  width: 30px;
+  height: 30px;
+  animation: scale 3s linear infinite;
+}
+
+.questions-container, #loadingThing, #buttonContainer, #continueOrRestart {
+  position: absolute;
+  right: 50%;
+  top: 50%;
+}
+
+#usersInput {
+  position: absolute;
+  width: 100%;
+  bottom: 50%;
+  margin-bottom: -160px;
+  text-align: center;
+  font-size: 25px;
+  white-space: nowrap;
+}
+
+.removeHidden {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;  
+}
+
+.inputs, .labels {
+  white-space: nowrap;
+}
+
+#calendar {
+  color: white;
+}
+
+#months {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  height: 100px;
+  margin-top: 10px;
+}
+
+#calendarHeading {
+  text-align: center;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+#monthbox {
+  display: flex;
+  flex-direction: row;
+  height: 25%;
+  padding-right: 35px;
+}
+
+.monthdaybox {
+  flex-grow: 1;
+}
+
+@keyframes scale {
+    0% { 
+      transform: scale(.2);
+      opacity: 0;
+    }
+    100% { 
+      transform: scale(1);
+      opacity: .8; 
+    }
+}
+
+</style>
+</head>
+<body>
+
+  <i id="navButton" class="fa fa-cog" aria-hidden="true"></i>
+
+  <nav id="mainNav">
+
+    <h1 id="navHeading">Menu</h1>
+
+    <ul>
+      <li><a href="/"><i class="fa fa-home" aria-hidden="true"></i> Home</a></li>
+      <li><a href="/income"><i class="fa fa-money" aria-hidden="true"></i> Income</a></li>
+      <li><a href="/expenses"><i class="fa fa-credit-card-alt" aria-hidden="true"></i> Expenses</a></li>
+      <li><a href="/profit"><i class="fa fa-calculator" aria-hidden="true"></i> Gross Profit</a></li>
+    </ul>
+    
+  </nav>
+
+  <div id="successContainer"></div> 
+
+  <div id="usersInput"></div>
+
+  <form id="mainForm" name="mainForm" action="/sendReceipt" method="post">
+
+      <div class="questions-container removeHidden">
+
+        <label for="location" class="labels" data-question="What vendor or location?">What vendor or location?</label>
+        <input id="location" class="inputs" type="text" name="location">
+        <p class="examples">You can say things like: Home depot, Gas station, or an address of an asset for example an office.</p>
+
+      </div>
+
+      <div class="questions-container removeHidden">
+
+        <label for="date" class="labels" data-question="What date?">What date?</label>
+        <input id="date" class="inputs" type="text" name="date">
+        <p class="examples">Please say date in this format (October 4th 2017) or (October 4th 17). The computer WON'T understand 10/4/17.</p>
+
+      </div>
+
+      <div class="questions-container removeHidden">
+
+        <label for="amount" class="labels" data-question="What amount?">What amount?</label>
+        <input id="amount" class="inputs" type="text" name="amount">
+
+      </div>
+
+      <div class="questions-container removeHidden">
       
+        <label for="expense_type" class="labels" data-question="What type of expense?">What type of expense?</label>
+        <input id="expense_type" class="inputs" type="text" name="expense_type">
 
-    </script>
-  </body>
+      </div>
+      
+    </div>
+
+    <div id="loadingThing" class="removeHidden">
+      <div id="loader"></div>
+      <div id="listening">Listening...</div>
+    </div>
+
+    <div id="buttonContainer">
+      
+      <div id="start">Add expense <i class="fa fa-plus" aria-hidden="true"></i></div>
+
+      <a id="spreedsheetLink" href="/expenses/spreadsheet">View all expenses <i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
+
+    </div>
+
+    <div id="continueOrRestart" class="removeHidden">
+      
+       <a id="restart" href="/expenses">Return to beginning <i class="fa fa-repeat" aria-hidden="true"></i></a>
+
+      <div id="continue">Continue from here <i class="fa fa-arrow-right" aria-hidden="true"></i></div>
+
+    </div>
+
+  </form>
+
+  <div id="errorContainer"></div> 
+  
+  <script src="scripts/mainNav.js"></script>
+
+  <script src="scripts/voice.js"></script>
+
+</body>
 </html>
+
+
+<!--   <div id="calendar" class="removeHidden">
+
+    <div id="calendarHeading">Calendar Months</div>
+
+    <div id="months">
+      <div id="monthbox">
+        <div class="monthdaybox">Jan</div> 
+        <div class="monthdayboxnum">(01)</div>
+      </div>
+      <div id="monthbox">
+        <div class="monthdaybox">Feb</div> 
+        <div class="monthdayboxnum">(02)</div>
+      </div>
+      <div id="monthbox">
+        <div class="monthdaybox">Mar</div> 
+        <div class="monthdayboxnum">(03)</div>
+      </div>
+      <div id="monthbox">
+        <div class="monthdaybox">Apr</div> 
+        <div class="monthdayboxnum">(04)</div>
+      </div>
+      <div id="monthbox">
+        <div class="monthdaybox">May</div> 
+        <div class="monthdayboxnum">(05)</div>
+      </div>
+      <div id="monthbox">
+        <div class="monthdaybox">Jun</div> 
+        <div class="monthdayboxnum">(06)</div>
+      </div>
+      <div id="monthbox">
+        <div class="monthdaybox">Jul</div> 
+        <div class="monthdayboxnum">(07)</div>
+      </div>
+      <div id="monthbox">
+        <div class="monthdaybox">Aug</div> 
+        <div class="monthdayboxnum">(08)</div>
+      </div>
+      <div id="monthbox">
+        <div class="monthdaybox">Sep</div> 
+        <div class="monthdayboxnum">(09)</div>
+      </div>
+      <div id="monthbox">
+        <div class="monthdaybox">Oct</div> 
+        <div class="monthdayboxnum">(10)</div>
+      </div>
+      <div id="monthbox">
+        <div class="monthdaybox">Nov</div> 
+        <div class="monthdayboxnum">(11)</div>
+      </div>
+      <div id="monthbox">
+        <div class="monthdaybox">Dec</div> 
+        <div class="monthdayboxnum">(12)</div>
+      </div>
+    </div>
+
+  </div> -->
