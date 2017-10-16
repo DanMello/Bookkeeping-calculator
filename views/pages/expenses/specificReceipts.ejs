@@ -11,10 +11,22 @@
 
 <style type="text/css">
 
+* {
+  padding: 0px;
+  margin: 0px;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
 #mainContainer {
+  padding: 10px 10px 0px 10px;
+  height: 100%;
   display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 table {
@@ -38,6 +50,7 @@ th, td {
   display: flex;
   align-items: center;
   margin-top: 20px;
+  margin-bottom: 20px;
   width: 100%;
   justify-content: space-around;
 }
@@ -68,18 +81,21 @@ th, td {
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% { 
+      transform: rotate(0deg); 
+    }
+    100% { 
+      transform: rotate(360deg); 
+    }
 }
 
 </style>
 </head>
 <body>
 
-
 <div id="mainContainer">
 
-<script src="../../../scripts/loader.js"></script>
+<!-- <script src="../../../scripts/loader.js"></script> -->
 
   <table id="mainTable">
 
@@ -89,14 +105,6 @@ th, td {
         <th>Amount</th>
         <th>Expense Type</th>
       </tr>
-    <% for(var i=0; i<receipts.length; i++) {%>
-      <tr>
-        <td><%= receipts[i].location %></td> 
-        <td><%= receipts[i].date %></td>
-        <td>$ <%= receipts[i].amount %></td>
-        <td><%= receipts[i].expense_type %></td>
-      </tr>
-    <% } %>
 
   </table>
 
@@ -108,7 +116,9 @@ th, td {
       <div>Pages:</div>
     </nav>
 
-    <div id="sum">Total for <%= location %> : $ <%= sum %></div>
+    <div id="sum"></div>
+
+    <button onclick="getData()">Click</button>
 
   </div>
   
@@ -118,6 +128,64 @@ th, td {
 <!-- This is quite interesting, if you render extra paths like /2017/lowes that are not in the folder views/, you need to add the amount of back spaces to the original page if that makes since lol to load the resource properly-->
 
 <script src="../../../scripts/tablePagination.js"></script>
+
+<script src="../../../scripts/loader.js"></script>
+
+<script type="text/javascript">
+
+    function getData() {
+
+      fetch(window.location.href, {
+        
+        method: 'GET',
+        headers: new Headers({
+          "X-Requested-With": "XMLHttpRequest"
+        })
+
+      }).then(results => {
+
+        loader()
+
+        return results.json()
+
+      }).then(results => {
+
+        let table = document.getElementById('mainTable');
+
+        results.receipts.forEach(row => {
+
+          let tableRow = document.createElement('tr');
+          let tableCells = ['location', 'date', 'amount', 'expense_type'];
+
+          tableCells.forEach(cell => {
+
+            let tableCell = document.createElement('td');
+            tableCell.textContent = row[cell];
+            tableRow.appendChild(tableCell);
+
+          });
+
+          table.appendChild(tableRow);
+
+        });
+
+        console.log(table.rows.length)
+
+      }).then(() => {
+
+        done();
+
+      }).catch(err => {
+
+        console.log(err);
+
+      });
+
+    }
+
+    getData()
+
+</script>
 
 <script type="text/javascript">
 

@@ -71,49 +71,54 @@ exports = module.exports = function(app, passport) {
 
   app.get('/expenses/spreadsheet/:year/:location', (req, res, next) => {
 
-    let storeReceipts
+    if (!req.xhr) {
 
-    return req.app.db('receipts')
-      .whereRaw(`YEAR(Date) = ${req.params.year} AND location = "${req.params.location}"`)
-      .orderBy('date', 'asc')
-      .limit(200)
-      .then(receipts => {
+      res.render('pages/expenses' + req.filepath + 'specificReceipts')
 
-        if (!receipts) return new Error('Could not find location')
+    } else {
 
-        receipts.map(x => { 
+      let storeReceipts
 
-          //index from zero lol, this is for date in this format mm/dd/yyyy
-          x.date = `${x.date.getMonth() + 1 }/${x.date.getDate()}/${x.date.getFullYear()}`
+      return req.app.db('receipts')
+        .whereRaw(`YEAR(Date) = ${req.params.year} AND location = "${req.params.location}"`)
+        .orderBy('date', 'asc')
+        .limit(10)
+        .then(receipts => {
 
-          //This is to add commas to the thousands from the decimal format 1,000
-          x.amount = x.amount.toLocaleString()
+          if (!receipts) return new Error('Could not find location')
+
+          receipts.map(x => { 
+
+            //index from zero lol, this is for date in this format mm/dd/yyyy
+            x.date = `${x.date.getMonth() + 1}/${x.date.getDate()}/${x.date.getFullYear()}`
+
+            //This is to add commas to the thousands from the decimal format 1,000
+            x.amount = x.amount.toLocaleString()
+
+          })
+
+          storeReceipts = receipts
+
+          return req.app.db('receipts')
+            .where('location', req.params.location)
+            .sum('amount')
+
+        }).then(amount => {
+          
+          if (!amount) return new Error('Could not sum amounts')
+
+          res.json({
+            receipts: storeReceipts,
+            location: req.params.location,
+            sum: amount[0]['sum(`amount`)'].toLocaleString()
+          })
+
+        }).catch(err => {
+
+          return next(err)
 
         })
-
-        storeReceipts = receipts
-
-        return req.app.db('receipts')
-          .where('location', req.params.location)
-          .sum('amount')
-
-      }).then(amount => {
-        
-        if (!amount) return new Error('Could not sum amounts')
-
-        res.render('pages/expenses' + req.filepath + 'specificReceipts', {
-
-          receipts: storeReceipts,
-          location: req.params.location,
-          sum: amount[0]['sum(`amount`)'].toLocaleString()
-
-        })
-
-      }).catch(err => {
-
-        return next(err)
-
-      })
+    }
 
   })
 
@@ -150,28 +155,28 @@ exports = module.exports = function(app, passport) {
 
   app.get('/test', (req, res, next) => {
 
-    // setInterval(addData, 100);
+    setInterval(addData, 100);
 
-    // let data = {
-    //   location: "Home Depot",
-    //   date: "2017-10-4",
-    //   amount: "253.54",
-    //   expense_type: "Work supplies"
-    // }
+    let data = {
+      location: "Home Depot",
+      date: "2017-10-4",
+      amount: "253.54",
+      expense_type: "Work supplies"
+    }
 
-    // function addData() {
+    function addData() {
 
-    //   return req.app.db('receipts')
-    //     .insert(data)
-    //     .then(result => {
+      return req.app.db('receipts')
+        .insert(data)
+        .then(result => {
 
-    //       if (!result) throw new Error("fuck")
+          if (!result) throw new Error("fuck")
 
-    //       console.log("ADDED")
+          console.log("ADDED")
 
-    //     })
+        })
 
-    // }
+    }
 
     res.render('pages/expenses/TEST')
     

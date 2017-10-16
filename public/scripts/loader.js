@@ -1,46 +1,39 @@
-(function () {
-
-  let body = document.body;
-  let mainContainer = body.querySelector('#mainContainer');
+function loader() {
 
   console.log('loading')
 
-  let loader = document.createElement('div');
+  let body = document.body;
 
-  mainContainer.style.display = 'none'
+  let loaderContainer = document.createElement('div');
 
-  loader.id = 'loading';
-  loader.style.border = '16px solid #f3f3f3';
-  loader.style['border-top'] = '16px solid #3498db';
-  loader.style['border-radius'] = '50%';
-  loader.style.width = "120px";
-  loader.style.height = "120px";
-  loader.style.position = 'absolute';
-  loader.style.top = '50%';
-  loader.style.left = '50%';
-  loader.style['margin-top'] = '-60px';
-  loader.style['margin-left'] = '-60px';
-  loader.style.animation = 'spin 1s linear infinite'
+  loaderContainer.id = 'loaderContainer';
+  loaderContainer.style.border = '17px dotted #3498db';
+  loaderContainer.style['border-radius'] = '50%';
+  loaderContainer.style.width = '120px';
+  loaderContainer.style.height = '120px';
+  loaderContainer.style.animation = 'spin 2s linear infinite';
+  loaderContainer.style.position = 'absolute';
+  loaderContainer.style.left = '50%';
+  loaderContainer.style.top = '50%';
+  loaderContainer.style['margin-left'] = '-60px';
+  loaderContainer.style['margin-top'] = '-60px';
 
-  body.appendChild(loader);
+  body.appendChild(loaderContainer);
+  
+};
 
-  window.onload = function loaded () {
+function done() {
 
-    console.log('loaded')
-      
-    let loader = document.getElementById('loading');
+  console.log('loaded')
+    
+  let loader = document.getElementById('loaderContainer');
 
-    if (loader !== null) {
+  if (loader !== null) {
 
-      loader.parentElement.removeChild(loader);
-
-      mainContainer.style.display = 'block'
-      
-    }
-
+    loader.parentElement.removeChild(loader);
+    
   };
 
-})();
-
+};
 
 
