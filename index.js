@@ -25,8 +25,14 @@ app.set('view engine', 'ejs')
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(express.static(staticAssets))
-app.use(session(Config.get('default')['session']))
+app.use(session(Config.get(Config.enviroment)['session']))
 app.use(flash())
+
+app.get('/set', (req, res, next) => {
+	req.session.name = [22, 22];
+	res.send(req.session)
+	
+})
 
 //setup routes
 require('./routes')(app)

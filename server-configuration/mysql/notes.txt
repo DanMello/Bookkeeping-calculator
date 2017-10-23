@@ -5,3 +5,28 @@ CREATE TABLE receipts (
 	amount DECIMAL(7,2) NOT NULL, 
 	expense_type VARCHAR(255)
 );
+
+DELIMITER $$
+CREATE PROCEDURE prepare_data()
+BEGIN
+  DECLARE i INT DEFAULT 0;
+
+  WHILE i < 500 DO
+    INSERT INTO receipts (location, date, amount, expense_type) VALUES ('Home Depot', '2017-3-20', '300.52', 'work supplies');
+    SET i = i + 1;
+  END WHILE;
+END$$
+DELIMITER;
+
+//start procedure
+call prepare_data();
+
+//Delete exisiting procedure
+
+DROP PROCEDURE IF EXISTS prepare_data;
+
+//Stop running procedure
+
+SHOW PROCESSLIST;
+
+KILL ID_of_process;

@@ -11,14 +11,13 @@ const config = {
         database: 'upperlevelcontractor' // Put your development database name here, for this project
       }
     },
-    mobileurl: '10.0.0.189'
-  },
-  default: {
     session: {
       secret: "secret phrase",
       resave: false,
-      saveUninitialized: false
-    }
+      saveUninitialized: false,
+      cookie: {}
+    },
+    mobileurl: '10.0.0.189'
   }
 }
 

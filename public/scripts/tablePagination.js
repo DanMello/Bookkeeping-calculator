@@ -1,60 +1,65 @@
-(function () {
+let pagination = (function () {
 
-  let table = document.getElementById('mainTable');
+  let table = document.getElementById('mainData'); 
   let nav = document.getElementById('pagination');
-  
-  let totalrows = table.rows.length;
-  let rowsVisible = Math.floor(window.innerHeight / 32);
-  let numberOfPages = Math.ceil(totalrows / rowsVisible);
+  let rowsVisible = Math.floor(window.innerHeight / 31);
 
-  for (i = 0; i < numberOfPages; i++) {
+  function createFirstLinks() {
 
-    if (i === 5) {
+    let totalrows = table.rows.length;
+    let numberOfPages = Math.ceil(totalrows / rowsVisible);
 
-      createButton('next')
+    for (i = 0; i < numberOfPages; ++i) {
 
-      break;
+      let pageNumber = i + 1;
+      let createdLink = document.createElement('a');
+
+      createdLink.rel = i;
+      createdLink.innerHTML = pageNumber;
+
+      nav.appendChild(createdLink);
+
+      if (pageNumber === 5) {
+
+        createButton('next');
+
+        break;
+
+      };
 
     };
 
-    let pageNumber = i + 1;
-    let createdLink = document.createElement('a');
+    Array.from(table.rows)
+      .map(rows => {
+        
+        rows.classList.add('hideTR');
+        rows.classList.remove('displayTR');
 
-    createdLink.rel = i;
-    createdLink.innerHTML = pageNumber;
+        return rows;
 
-    nav.appendChild(createdLink);
-
-  };
-
-  Array.from(table.rows)
-    .map(rows => {
+      })
+      .slice(0, rowsVisible)
+      .map(rows => {
       
-      rows.style.display = 'none';
+        rows.classList.remove('hideTR');
+        rows.classList.add('displayTR');
 
-      return rows;
+      });
 
-    })
-    .slice(0, rowsVisible)
-    .map(rows => {
+      let links = nav.querySelectorAll('a');
+
+      links.forEach(link => link.addEventListener('click', navigate));
+
+      links[0].style.color = "#0074D9";
     
-      rows.style.display = 'table-row';
-
-    });
-
-  let navLinks = nav.querySelectorAll('a');
-
-  for (i = 0; i < navLinks.length; i++) {
-
-    navLinks[i].addEventListener('click', navigate)
-
   };
 
-  function navigate () { 
+  function navigate (pageNum) {
 
-    let currentPage = this.attributes['rel'].value;
+    let currentPage;
 
-    console.log(currentPage)
+    if (typeof pageNum === 'number') currentPage = pageNum
+    else currentPage = Number(this.attributes['rel'].value)
 
     let startItem = currentPage * rowsVisible;
 
@@ -63,7 +68,8 @@
     Array.from(table.rows)
       .map(rows => {
 
-        rows.style.display = 'none';
+        rows.classList.add('hideTR');
+        rows.classList.remove('displayTR');
 
         return rows;
 
@@ -71,62 +77,88 @@
       .slice(startItem, endItem)
       .map(rows => {
 
-        rows.style.display = 'table-row';
-        
+        rows.classList.remove('hideTR');
+        rows.classList.add('displayTR');
+
+      });
+
+      let newLinks = nav.querySelectorAll('a')
+
+      newLinks.forEach(item => {
+
+        let number = Number(item.rel)
+
+        if (number !== currentPage) item.style.color = 'black'
+        else item.style.color = '#0074D9'
+
       })
 
   };
 
   function nextPage() {
 
-    for (i = 0; i < navLinks.length; i++) {
+    let currentPageLastIndex = this.previousElementSibling['attributes'].rel.value;
+    let currentPageLength = Number(currentPageLastIndex) + 1;
+    let nextPageNum = (currentPageLength + 5) / 5;
+    let rowsPer5Pages = Math.floor(window.innerHeight / 31) * 5;
+    let enoughRowsForNext = nextPageNum * rowsPer5Pages;
 
-      navLinks[i].removeEventListener('click', navigate)
+    let grabData = getAndPostData.bind(this);
 
-    };
+    grabData(nextPageNum).then(() => {
 
-    let currentPageLength = this.previousElementSibling['attributes'].rel.value;
-    let lengthToNumber = Number(currentPageLength) + 1;
-    let currentRemaining = numberOfPages - lengthToNumber;
+      let totalrows = table.rows.length;
+      let numberOfPages = Math.ceil(totalrows / rowsVisible);
 
-    nav.querySelectorAll('a, span').forEach(item => item.parentElement.removeChild(item));
+      let numberOfPagesNeed = numberOfPages - currentPageLength;
 
-    createButton('previous');
+      nav.querySelectorAll('a, span').forEach(item => item.parentElement.removeChild(item));
 
-    for (i = 0; i < currentRemaining; i++) {
+      createButton('previous');
 
-      if (i === 5) {
+      for (i = 0; i < numberOfPagesNeed; i++) {
 
-        createButton('next');
+        let pageNumber = i + currentPageLength + 1; 
+        let createdLink = document.createElement('a');
+        let index = i + 1;
 
-        break;
-      }
+        createdLink.rel = pageNumber - 1;
+        createdLink.innerHTML = pageNumber;
+        createdLink.className = 'navButtons'
 
-      let pageNumber = i + lengthToNumber + 1; 
-      let createdLink = document.createElement('a');
+        nav.appendChild(createdLink);
 
-      createdLink.rel = pageNumber - 1;
-      createdLink.innerHTML = pageNumber;
+        if (index === 5 && table.rows.length >= enoughRowsForNext) {
 
-      nav.appendChild(createdLink);
+          createButton('next');
 
-    };
+          break;
+        };
 
-    let navUpdated = nav.querySelectorAll('a');
+      };
 
-    for (i = 0; i < navUpdated.length; i++) {
+      let navLinks = nav.querySelectorAll('a');
 
-      navUpdated[i].addEventListener('click', navigate)
+      for (i = 0; i < navLinks.length; i++) {
 
-    };
+        navLinks[i].addEventListener('click', navigate);
+
+      };
+
+      navigate(currentPageLength)
+
+    });
 
   };
 
   function previousPage() {
 
-    let currentPageLength = this.nextElementSibling['attributes'].rel.value;
-    let lengthToNumber = Number(currentPageLength) + 1;
-    let nextPagesRemaining = numberOfPages - lengthToNumber;
+    let totalrows = table.rows.length;
+    let numberOfPages = Math.ceil(totalrows / rowsVisible);
+
+    let currentPageLastIndex = this.nextElementSibling['attributes'].rel.value;
+    let currentPageLength = Number(currentPageLastIndex) + 1;
+    let nextPagesRemaining = numberOfPages - currentPageLength;
     let previousPagesRemaining = numberOfPages - nextPagesRemaining - 1;
 
     nav.querySelectorAll('a, span').forEach(item => item.parentElement.removeChild(item));
@@ -143,25 +175,35 @@
       };
 
       let index = i + 1;
-      let pageNumber = lengthToNumber - index; 
+      let pageNumber = currentPageLength - index; 
       let createdLink = document.createElement('a');
 
       createdLink.rel = pageNumber - 1;
       createdLink.innerHTML = pageNumber;
-  
+
       reverseList.push(createdLink);
 
     };
 
     reverseList
-      .reverse()
-      .forEach(item => {
+    .reverse()
+    .forEach(item => {
 
-        nav.appendChild(item);
+      nav.appendChild(item);
 
-      });
+    });
+
+    navLinks = nav.querySelectorAll('a');
+
+    for (i = 0; i < navLinks.length; i++) {
+
+      navLinks[i].addEventListener('click', navigate)
+
+    };
 
     createButton('next');
+
+    navigate(currentPageLastIndex - 1);
 
   };
 
@@ -169,27 +211,35 @@
 
     let method;
     let className;
+    let id;
 
     if (type === 'next') {
 
       method = nextPage;
       className = 'fa fa-arrow-right';
+      id = 'next'
 
     } else if (type === 'previous') {
 
-      method = previousPage; 
+      method = previousPage;
       className = 'fa fa-arrow-left';
+      id = 'previous'; 
 
-    } 
+    };
 
     let createdButton = document.createElement('span');
 
     createdButton.addEventListener('click', method);
     createdButton.className = className;
+    createdButton.id = id;
     createdButton.style.cursor = 'pointer';
 
     nav.appendChild(createdButton);
     
+  };
+
+  return {
+    createFirstLinks
   };
 
 })();

@@ -4,7 +4,6 @@
 
   <title>Specific Receipts</title>
 
-  
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.1/css/font-awesome.min.css" />
 
   <link href="../../../styles/print.css" media="print" rel="stylesheet" type="text/css">
@@ -80,13 +79,23 @@ th, td {
   font-size: 25px;
 }
 
+.hideTR {
+  display: none;
+}
+
+.displayTR {
+  display: table-row;
+}
+
 @keyframes spin {
+
     0% { 
       transform: rotate(0deg); 
     }
     100% { 
       transform: rotate(360deg); 
     }
+
 }
 
 </style>
@@ -95,16 +104,19 @@ th, td {
 
 <div id="mainContainer">
 
-<!-- <script src="../../../scripts/loader.js"></script> -->
-
   <table id="mainTable">
 
-      <tr>
-        <th>Location</th> 
-        <th>Date</th>
-        <th>Amount</th>
-        <th>Expense Type</th>
-      </tr>
+    <thead>
+      <th>Id</th> 
+      <th>Location</th> 
+      <th>Date</th>
+      <th>Amount</th>
+      <th>Expense Type</th>
+    </thead>
+
+    <tbody id="mainData">
+      
+    </tbody>
 
   </table>
 
@@ -118,72 +130,138 @@ th, td {
 
     <div id="sum"></div>
 
-    <button onclick="getData()">Click</button>
-
   </div>
   
 </div>
 
-
 <!-- This is quite interesting, if you render extra paths like /2017/lowes that are not in the folder views/, you need to add the amount of back spaces to the original page if that makes since lol to load the resource properly-->
 
-<script src="../../../scripts/tablePagination.js"></script>
-
 <script src="../../../scripts/loader.js"></script>
-
+<script src="../../../scripts/tablePagination.js"></script>
 <script type="text/javascript">
 
-    function getData() {
+  let dataAlreadyLoadedArray = [];
+  let currentData = null;
+
+  function getAndPostData(pageNumber) {
+
+    let visibleRows = document.querySelectorAll('.displayTR')
+
+    if (this.id === 'next') {
+
+      var alreadyLoadedDataString = this.previousElementSibling['attributes'].rel.value;
+      var dataAlreadyLoadedToNum = Number(alreadyLoadedDataString) + 1;
+
+      currentData = dataAlreadyLoadedToNum;
+
+    };
+
+    return new Promise(function(resolve, reject) {
+
+      let jsonBody = {
+        calculation: Math.floor(window.innerHeight / 31) * 5,
+        pageNumber: pageNumber || 1,
+        dataAlreadyLoaded: dataAlreadyLoadedArray,
+        currentData: currentData
+      };
 
       fetch(window.location.href, {
         
-        method: 'GET',
+        method: 'POST',
+        body: JSON.stringify(jsonBody),
         headers: new Headers({
+          "Accept": "application/json",
+          "Content-Type": "application/json",
           "X-Requested-With": "XMLHttpRequest"
-        })
+        }),
+        credentials: 'include'
 
       }).then(results => {
-
-        loader()
 
         return results.json()
 
+      }).then(postJsonResults => {
+
+        if (postJsonResults.alreadyLoaded === true) {
+
+          resolve('alreadyLoaded');
+
+        } else {
+
+          visibleRows.forEach(item => {
+
+            item.classList.remove('displayTR');
+            item.classList.add('hideTR');
+
+          });
+
+          loader();
+
+          return fetch(window.location.href, {
+
+            method: 'GET',
+            headers: new Headers({
+              "X-Requested-With": "XMLHttpRequest"
+            }),
+            credentials: 'include'
+
+          })
+          
+        }
+
       }).then(results => {
 
-        let table = document.getElementById('mainTable');
+        return results.json()
 
-        results.receipts.forEach(row => {
+      }).then(getJsonResults => {
+
+        let tbody = document.getElementById('mainData');
+        let sum = document.getElementById('sum').innerHTML = 
+          `Total for ${getJsonResults['location']}: $${getJsonResults['sum']}`;
+
+        getJsonResults.receipts.forEach(row => {
 
           let tableRow = document.createElement('tr');
-          let tableCells = ['location', 'date', 'amount', 'expense_type'];
+          let tableCells = ['id', 'location', 'date', 'amount', 'expense_type'];
 
           tableCells.forEach(cell => {
 
             let tableCell = document.createElement('td');
-            tableCell.textContent = row[cell];
+
+            if (cell === 'amount') tableCell.textContent = `$${row[cell]}`;
+            else tableCell.textContent = row[cell];
+
             tableRow.appendChild(tableCell);
 
           });
 
-          table.appendChild(tableRow);
+          tbody.appendChild(tableRow);
 
         });
 
-        console.log(table.rows.length)
-
-      }).then(() => {
-
-        done();
+        resolve();
 
       }).catch(err => {
 
-        console.log(err);
+        reject(err);
 
       });
 
-    }
+    }).then(resolved => {
 
-    getData()
+      if (this === window) pagination.createFirstLinks();
+      if (this.id === 'next') dataAlreadyLoadedArray.push(dataAlreadyLoadedToNum);
+      if (resolved !== 'alreadyLoaded') done();
+
+    }).catch(err => {
+
+      console.log(err);
+
+    });
+  
+  };
+
+  getAndPostData();
 
 </script>
 
@@ -207,7 +285,6 @@ th, td {
   }
 
 </script>
-
 
 </body>
 </html>

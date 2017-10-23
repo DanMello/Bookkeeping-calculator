@@ -73,21 +73,23 @@ exports = module.exports = function(app, passport) {
 
     if (!req.xhr) {
 
-      res.render('pages/expenses' + req.filepath + 'specificReceipts')
+        res.render('pages/expenses' + req.filepath + 'specificReceipts')
 
     } else {
 
       let storeReceipts
 
+      let offset = (req.session.pageNumber * req.session.maxRowsLoaded) - req.session.maxRowsLoaded;
+      let range = (req.session.pageNumber * req.session.maxRowsLoaded)
+
       return req.app.db('receipts')
         .whereRaw(`YEAR(Date) = ${req.params.year} AND location = "${req.params.location}"`)
         .orderBy('date', 'asc')
-        .limit(10)
         .then(receipts => {
 
           if (!receipts) return new Error('Could not find location')
 
-          receipts.map(x => { 
+          receipts.map(x => {
 
             //index from zero lol, this is for date in this format mm/dd/yyyy
             x.date = `${x.date.getMonth() + 1}/${x.date.getDate()}/${x.date.getFullYear()}`
@@ -107,8 +109,10 @@ exports = module.exports = function(app, passport) {
           
           if (!amount) return new Error('Could not sum amounts')
 
+          let offsetReceipts = storeReceipts.slice(offset, range)
+
           res.json({
-            receipts: storeReceipts,
+            receipts: offsetReceipts,
             location: req.params.location,
             sum: amount[0]['sum(`amount`)'].toLocaleString()
           })
@@ -119,6 +123,27 @@ exports = module.exports = function(app, passport) {
 
         })
     }
+
+  })
+
+  app.post('/expenses/spreadsheet/:year/:location', (req, res, next) => {
+
+    let currentNumber = req.body['currentData']
+    req.session.maxRowsLoaded = req.body['calculation']
+    req.session.pageNumber = req.body['pageNumber']
+
+    let alreadyLoaded = false
+
+    req.body['dataAlreadyLoaded'].forEach(item => {
+
+      if (currentNumber === item) alreadyLoaded = true
+
+    })
+
+    res.json({
+      success: true,
+      alreadyLoaded: alreadyLoaded
+    })
 
   })
 
@@ -168,6 +193,7 @@ exports = module.exports = function(app, passport) {
 
       return req.app.db('receipts')
         .insert(data)
+        .limit(286)
         .then(result => {
 
           if (!result) throw new Error("fuck")
@@ -177,9 +203,9 @@ exports = module.exports = function(app, passport) {
         })
 
     }
-
+    
     res.render('pages/expenses/TEST')
     
   })
 
-}
+};
