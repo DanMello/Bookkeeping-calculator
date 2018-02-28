@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<title>Category</title>
+
+<style>
+.formLines {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 1px solid #ccc;
+  margin: 5px 0px;
+  padding: 0; 
+}
+</style>
+</head>
+<body>
+
+  <% var locationsObj = JSON.parse(locations) %>
+
+  <% console.log(locationsObj) %>
+
+  <div style="display: flex; justify-content: center;background:rgb(240, 243, 244); height: 600px;">
+    
+    <div style="background: grey;padding: 20px;background: white;margin-top: 20px;border-radius: 5px;border: 1px solid #ccc; font-family: sans-serif;min-width: 900px;">
+
+      <h1>Expenses <%= year %></h1>
+
+      <h2 style="margin-bottom: 10px;padding: 10px;">Category: <%= category %></h2>
+
+      <% locationsObj.locations.forEach(item => { %>
+
+        <hr class="formLines">
+
+        <div style="padding: 10px;display: flex;justify-content: space-between;">
+
+          <span style="font-size: 17px;flex: 1;font-weight: bold;"><%= item.location %></span>
+
+          <div style="font-size: 17px;color: #B22222;flex: 1;font-style: italic;flex-basis: 10%;">$ -<%=item.Total%></div>
+
+          <a href="/expenses/spreadsheet/<%= year %>/<%= category %>/<%= item.location %>" class="receiptsLink" style="flex: 1;color: #365899">View all transactions</a>
+
+        </div>
+
+      <% }) %>
+
+        <hr class="formLines">
+
+        <div style="padding: 10px;display: flex;">
+
+          <span style="font-size: 20px;font-weight: bold;">Total <%=category%>:</span>
+
+          <div style="font-size: 20px;color: #B22222;font-style: italic;margin-left: 10px;">$ -<%= locationsObj.total %></div>
+
+        </div>
+
+    </div>
+
+  </div>
+      
+</body>
+</html>

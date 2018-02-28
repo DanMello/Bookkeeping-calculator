@@ -2,7 +2,7 @@ let pagination = (function () {
 
   let table = document.getElementById('mainData'); 
   let nav = document.getElementById('pagination');
-  let rowsVisible = Math.floor(window.innerHeight / 31);
+  let rowsVisible = Math.floor(window.innerHeight / 33);
 
   function createFirstLinks() {
 
@@ -64,6 +64,7 @@ let pagination = (function () {
     let startItem = currentPage * rowsVisible;
 
     let endItem = startItem + rowsVisible;
+    let links = nav.querySelectorAll('a')
 
     Array.from(table.rows)
       .map(rows => {
@@ -82,9 +83,8 @@ let pagination = (function () {
 
       });
 
-      let newLinks = nav.querySelectorAll('a')
 
-      newLinks.forEach(item => {
+      links.forEach(item => {
 
         let number = Number(item.rel)
 
@@ -100,10 +100,10 @@ let pagination = (function () {
     let currentPageLastIndex = this.previousElementSibling['attributes'].rel.value;
     let currentPageLength = Number(currentPageLastIndex) + 1;
     let nextPageNum = (currentPageLength + 5) / 5;
-    let rowsPer5Pages = Math.floor(window.innerHeight / 31) * 5;
+    let rowsPer5Pages = Math.floor(window.innerHeight / 33) * 5;
     let enoughRowsForNext = nextPageNum * rowsPer5Pages;
 
-    let grabData = getAndPostData.bind(this);
+    let grabData = ajaxFunction.getAndPostData.bind(this);
 
     grabData(nextPageNum).then(() => {
 

@@ -3,19 +3,30 @@
 <head>
 
 	<title>Expenses Spreadsheet</title>
-
+<style>
+#list {
+  list-style-type: none;
+  font-size: 25px;
+}
+#list li {
+  padding: 5px;
+}
+#list a {
+  color: blue;
+}
+</style>
 </head>
 <body>
 
-	<h1>Expenses Overview</h1>
+  <h1>Expenses and Returns Overview</h1>
 
-	<ul>
-	<% for(var i=0; i<years.length; i++) {%>
+  <ul id="list">
+    <% for(var i=0; i<years.length; i++) {%>
 
-	   <li><a href="/expenses/spreadsheet/<%= years[i]['YEAR(date)'] %>"><%= years[i]['YEAR(date)'] %></a></li>
-	   
-	<% } %>
-	</ul>
+      <li><a href="/expenses/spreadsheet/<%= years[i]['YEAR(date)'] %>"><%= years[i]['YEAR(date)'] %></a></li>
 
+    <% } %>
+  </ul>
+      
 </body>
 </html>

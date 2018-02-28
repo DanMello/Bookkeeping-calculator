@@ -46,30 +46,102 @@ exports = module.exports = function(app, passport) {
           years: years
 
         })
-        
       })
-
   })
 
   app.get('/expenses/spreadsheet/:year', (req, res, next) => {
 
     return req.app.db('receipts')
-     .whereRaw(`YEAR(Date) = ${req.params.year}`)
-     .distinct('location')
-     .then(locations => {
+      .select('expense_type','location', req.app.db.raw('SUM(amount) AS Total'))
+      .from('receipts')
+      .whereRaw(`YEAR(Date) = ${req.params.year}`)
+      .groupByRaw('expense_type, location WITH ROLLUP')
+      .then(result => {
+
+        let filteredResults = function (array) {
+
+          let receipts = array
+            .filter(item => item.expense_type !== null && item.location !== null)
+
+          let totals = array
+            .filter(item => item.expense_type !== null && item.location === null)
+
+          let grandTotal = array
+            .filter(item => item.expense_type === null && item.location === null)
+            .map(item => item.Total)
+
+          let obj = {}
+
+          obj.expenses = {}
+          obj.totals = {} 
+
+          totals.forEach(item => {
+
+            let name = item.expense_type.charAt(0).toUpperCase() + item.expense_type.slice(1)
+            
+            obj.expenses[`${name}`] = {}
+            obj.expenses[`${name}`].locations = []
+            obj.expenses[`${name}`].total = item.Total
+          })
+
+          receipts.forEach(item => {
+
+            let name = item.expense_type.charAt(0).toUpperCase() + item.expense_type.slice(1)
+
+            obj.expenses[`${name}`].locations.push({ location: item.location, total: item.Total })
+          })
+    
+          obj.totals.grandTotal = grandTotal[0]
+
+          return obj
+        }
 
         res.render('pages/expenses' + req.filepath + 'expenses', {
-
           year: req.params.year,
-          locations: locations
-
+          result: JSON.stringify(filteredResults(result), null, 2)
         })
-
-     })
-
+    })
   })
 
-  app.get('/expenses/spreadsheet/:year/:location', (req, res, next) => {
+  app.get('/expenses/spreadsheet/:year/:category', (req, res, next) => {
+
+    let category = req.params.category.toLowerCase()
+
+    req.app.db('receipts')
+      .select('location', req.app.db.raw('SUM(amount) AS Total'))
+      .from('receipts')
+      .whereRaw(`expense_type = "${category}"`)
+      .groupByRaw('location WITH ROLLUP')
+      .then(receipts => {
+
+        let filteredResults = function (array) {
+
+          let obj = {}
+
+          let locationsArray = []
+
+          let locations = array.filter(item => item.location !== null).forEach(obj => locationsArray.push(obj))
+
+          let total = array.filter(item => item.location === null).map(x => x.Total)
+
+          obj.locations = locationsArray
+
+          obj.total = total[0]
+
+          return obj
+        }
+
+        res.render('pages/expenses' + req.filepath + 'category', {
+          locations: JSON.stringify(filteredResults(receipts), null, 2),
+          year: req.params.year,
+          category: req.params.category
+        })
+      })
+  })
+
+  app.get('/expenses/spreadsheet/:year/:category/:location', (req, res, next) => {
+
+    console.log('yoo')
 
     if (!req.xhr) {
 
@@ -126,7 +198,7 @@ exports = module.exports = function(app, passport) {
 
   })
 
-  app.post('/expenses/spreadsheet/:year/:location', (req, res, next) => {
+  app.post('/expenses/spreadsheet/:year/:category/:location', (req, res, next) => {
 
     let currentNumber = req.body['currentData']
     req.session.maxRowsLoaded = req.body['calculation']
@@ -209,3 +281,22 @@ exports = module.exports = function(app, passport) {
   })
 
 };
+
+
+
+// <!-- 
+//         <% if (result[i].location === null && result[i].expense_type === null) { %>
+
+//           <th id="total">All expenses total: $ <%= result[i].Total %></a></th>
+
+//         <% } else if (result[i].location === null) { %>
+
+//           <% var string = result[i].expense_type.charAt(0).toUpperCase() + result[i].expense_type.slice(1) %>
+
+//           <tr id="total"><%= string %> expenses total: $ <%= result[i].Total %></a></tr>
+
+//         <% } else { %>
+
+//          <td><a href="/expenses/spreadsheet/<%= year %>/<%= result[i].location %>"><%= result[i].location %>, $ <%= result[i].Total %></a></td>
+        
+//         <% } %> -->
